@@ -1,9 +1,9 @@
 import 'package:cineflix/description.dart';
 import 'package:flutter/material.dart';
 
-class Talk extends StatelessWidget {
-  const Talk({super.key, required this.talkSeries});
-  final List talkSeries;
+class DocSeries extends StatelessWidget {
+  const DocSeries({super.key, required this.documentarySeries});
+  final List documentarySeries;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class Talk extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Talk Series',
+            'Documentary Series',
             style: TextStyle(
               color: Colors.white,
               fontSize: fontSize * 1.22,
@@ -32,7 +32,7 @@ class Talk extends StatelessWidget {
             height: height * 0.36,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: talkSeries.length,
+              itemCount: documentarySeries.length,
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
@@ -40,12 +40,12 @@ class Talk extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => Description(
-                          name: talkSeries[index]['original_name'] != null? talkSeries[index]['original_name'] : 'Loading',
-                          bannerUrl: talkSeries[index]['backdrop_path'] != null? 'https://image.tmdb.org/t/p/w500'+talkSeries[index]['backdrop_path'] : talkSeries[index]['poster_path'],
-                          posterUrl: talkSeries[index]['poster_path'] != null? 'https://image.tmdb.org/t/p/w500'+talkSeries[index]['poster_path'] : talkSeries[index]['backdrop_path'],
-                          description: talkSeries[index]['overview'] ?? 'No description available',
-                          vote: talkSeries[index]['vote_average']?.toString() ?? 'N/A',
-                          launch_on: talkSeries[index]['first_air_date'] ?? 'Unknown',
+                          name: documentarySeries[index]['original_name'] != null? documentarySeries[index]['original_name'] : 'Loading',
+                          bannerUrl: documentarySeries[index]['backdrop_path'] != null? 'https://image.tmdb.org/t/p/w500'+documentarySeries[index]['backdrop_path'] : 'https://via.placeholder.com/150',
+                          posterUrl: documentarySeries[index]['poster_path'] != null? 'https://image.tmdb.org/t/p/w500'+documentarySeries[index]['poster_path'] : 'https://via.placeholder.com/150',
+                          description: documentarySeries[index]['overview'] ?? 'No description available',
+                          vote: documentarySeries[index]['vote_average']?.toString() ?? 'N/A',
+                          launch_on: documentarySeries[index]['first_air_date'] ?? 'Unknown',
                         ),
                       ),
                     );
@@ -60,8 +60,8 @@ class Talk extends StatelessWidget {
                             borderRadius: BorderRadius.circular(50,),
                             image: DecorationImage(
                               image: NetworkImage(
-                                talkSeries[index]['poster_path'] != null
-                                    ? 'https://image.tmdb.org/t/p/w500' + talkSeries[index]['poster_path']
+                                documentarySeries[index]['poster_path'] != null
+                                    ? 'https://image.tmdb.org/t/p/w500' + documentarySeries[index]['poster_path']
                                     : 'https://via.placeholder.com/150',
                               ),
                             ),
@@ -69,7 +69,7 @@ class Talk extends StatelessWidget {
                         ),
                         SizedBox(height: height * 0.025,),
                         Text(
-                          talkSeries[index]['original_name'] != null? talkSeries[index]['original_name'] : 'Loading',
+                          documentarySeries[index]['original_name'] != null? documentarySeries[index]['original_name'] : 'Loading',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: fontSize * 0.8,
