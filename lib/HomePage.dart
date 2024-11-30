@@ -1,25 +1,24 @@
-import 'package:cineflix/utils/text.dart';
-import 'package:cineflix/widgets/action.dart';
-import 'package:cineflix/widgets/adventureMovies.dart';
-import 'package:cineflix/widgets/animationMovies.dart';
-import 'package:cineflix/widgets/comedyMovies.dart';
-import 'package:cineflix/widgets/documentaryMovies.dart';
-import 'package:cineflix/widgets/dramaMovies.dart';
-import 'package:cineflix/widgets/familyMovies.dart';
-import 'package:cineflix/widgets/historyMovies.dart';
-import 'package:cineflix/widgets/horrorMovies.dart';
-import 'package:cineflix/widgets/musicFilms.dart';
-import 'package:cineflix/widgets/mysteryMovies.dart';
-import 'package:cineflix/widgets/popular.dart';
-import 'package:cineflix/widgets/romanceMovies.dart';
-import 'package:cineflix/widgets/scienceFictionMovies.dart';
-import 'package:cineflix/widgets/thriller.dart';
-import 'package:cineflix/widgets/topRated.dart';
-import 'package:cineflix/widgets/topRatedSeries.dart';
-import 'package:cineflix/widgets/trendingMovies.dart';
-import 'package:cineflix/widgets/tv.dart';
-import 'package:cineflix/widgets/upcomingMovies.dart';
-import 'package:cineflix/widgets/westernMovies.dart';
+import 'package:cineflix/widgets/englishMovies/action.dart';
+import 'package:cineflix/widgets/englishMovies/adventureMovies.dart';
+import 'package:cineflix/widgets/englishMovies/animationMovies.dart';
+import 'package:cineflix/widgets/englishMovies/comedyMovies.dart';
+import 'package:cineflix/widgets/englishMovies/documentaryMovies.dart';
+import 'package:cineflix/widgets/englishMovies/dramaMovies.dart';
+import 'package:cineflix/widgets/englishMovies/familyMovies.dart';
+import 'package:cineflix/widgets/englishMovies/historyMovies.dart';
+import 'package:cineflix/widgets/englishMovies/horrorMovies.dart';
+import 'package:cineflix/widgets/englishMovies/musicFilms.dart';
+import 'package:cineflix/widgets/englishMovies/mysteryMovies.dart';
+import 'package:cineflix/widgets/englishMovies/popular.dart';
+import 'package:cineflix/widgets/englishMovies/romanceMovies.dart';
+import 'package:cineflix/widgets/englishMovies/scienceFictionMovies.dart';
+import 'package:cineflix/widgets/englishMovies/thriller.dart';
+import 'package:cineflix/widgets/englishMovies/topRated.dart';
+import 'package:cineflix/widgets/englishMovies/trendingMovies.dart';
+import 'package:cineflix/widgets/englishMovies/upcomingMovies.dart';
+import 'package:cineflix/widgets/englishMovies/westernMovies.dart';
+import 'package:cineflix/widgets/englishSeries/topRatedSeries.dart';
+import 'package:cineflix/widgets/englishSeries/tv.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tmdb_api/tmdb_api.dart';
@@ -45,7 +44,7 @@ class _HomepageState extends State<Homepage> {
   List animationMovies = [];
   List comedyMovies = [];
   List romanceMovies = [];
-  List scifiMovies = [];
+  List sciFiMovies = [];
   List documentaryMovies = [];
   List historyMovies = [];
   List mysteryMovies = [];
@@ -104,7 +103,7 @@ class _HomepageState extends State<Homepage> {
         animationMovies = animationMoviesResult['results'];
         comedyMovies = comedyMoviesResult['results'];
         romanceMovies = romanceMoviesResult['results'];
-        scifiMovies = scienceFictionMoviesResult['results'];
+        sciFiMovies = scienceFictionMoviesResult['results'];
         documentaryMovies = documentaryMoviesResult['results'];
         historyMovies = historyMoviesResult['results'];
         mysteryMovies = mysteryMoviesResult['results'];
@@ -156,7 +155,7 @@ class _HomepageState extends State<Homepage> {
           AnimationMovies(animationMovies: animationMovies,),
           ComedyMovies(comedyMovies: comedyMovies,),
           RomanceMovies(romanceMovies: romanceMovies,),
-          ScienceFictionMovies(sciFiMovies: scifiMovies,),
+          ScienceFictionMovies(sciFiMovies: sciFiMovies,),
           DocumentaryMovies(documentaryMovies: documentaryMovies,),
           HistoryMovies(historyMovies: historyMovies,),
           WesternMovies(westernMovies: westernMovies,),
