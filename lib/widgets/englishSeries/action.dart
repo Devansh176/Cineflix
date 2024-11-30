@@ -1,9 +1,9 @@
 import 'package:cineflix/description.dart';
 import 'package:flutter/material.dart';
 
-class Toprated extends StatelessWidget {
-  const Toprated({super.key, required this.topRated});
-  final List topRated;
+class ActionSeries extends StatelessWidget {
+  const ActionSeries({super.key, required this.actionSeries});
+  final List actionSeries;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class Toprated extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Top Rated Movies',
+            'Action and Adventure Series',
             style: TextStyle(
               color: Colors.white,
               fontSize: fontSize * 1.22,
@@ -32,7 +32,7 @@ class Toprated extends StatelessWidget {
             height: height * 0.36,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: topRated.length,
+              itemCount: actionSeries.length,
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
@@ -40,12 +40,12 @@ class Toprated extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => Description(
-                          name: topRated[index]['original_name'] != null? topRated[index]['original_name'] : topRated[index]['title'],
-                          bannerUrl: 'https://image.tmdb.org/t/p/w500'+topRated[index]['backdrop_path'],
-                          posterUrl: 'https://image.tmdb.org/t/p/w500'+topRated[index]['poster_path'],
-                          description: topRated[index]['overview'],
-                          vote: topRated[index]['vote_average'].toString(),
-                          launch_on: topRated[index]['release_date'],
+                          name: actionSeries[index]['original_name'] != null? actionSeries[index]['original_name'] : 'Loading',
+                          bannerUrl: actionSeries[index]['backdrop_path'] != null? 'https://image.tmdb.org/t/p/w500'+actionSeries[index]['backdrop_path'] : 'https://via.placeholder.com/150',
+                          posterUrl: actionSeries[index]['poster_path'] != null? 'https://image.tmdb.org/t/p/w500'+actionSeries[index]['poster_path'] : 'https://via.placeholder.com/150',
+                          description: actionSeries[index]['overview'] ?? 'No description available',
+                          vote: actionSeries[index]['vote_average']?.toString() ?? 'N/A',
+                          launch_on: actionSeries[index]['first_air_date'] ?? 'Unknown',
                         ),
                       ),
                     );
@@ -60,14 +60,16 @@ class Toprated extends StatelessWidget {
                             borderRadius: BorderRadius.circular(50,),
                             image: DecorationImage(
                               image: NetworkImage(
-                                  'https://image.tmdb.org/t/p/w500'+topRated[index]['poster_path']
+                                actionSeries[index]['poster_path'] != null
+                                    ? 'https://image.tmdb.org/t/p/w500' + actionSeries[index]['poster_path']
+                                    : 'https://via.placeholder.com/150',
                               ),
                             ),
                           ),
                         ),
                         SizedBox(height: height * 0.025,),
                         Text(
-                          topRated[index]['title'] != null? topRated[index]['title'] : 'Loading',
+                          actionSeries[index]['original_name'] != null? actionSeries[index]['original_name'] : 'Loading',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: fontSize * 0.8,

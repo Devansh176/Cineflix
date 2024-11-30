@@ -17,8 +17,12 @@ import 'package:cineflix/widgets/englishMovies/topRated.dart';
 import 'package:cineflix/widgets/englishMovies/trendingMovies.dart';
 import 'package:cineflix/widgets/englishMovies/upcomingMovies.dart';
 import 'package:cineflix/widgets/englishMovies/westernMovies.dart';
+import 'package:cineflix/widgets/englishSeries/action.dart';
+import 'package:cineflix/widgets/englishSeries/comedy.dart';
+import 'package:cineflix/widgets/englishSeries/talk.dart';
 import 'package:cineflix/widgets/englishSeries/topRatedSeries.dart';
 import 'package:cineflix/widgets/englishSeries/tv.dart';
+import 'package:cineflix/widgets/englishSeries/drama.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tmdb_api/tmdb_api.dart';
@@ -52,6 +56,10 @@ class _HomepageState extends State<Homepage> {
   List dramaMovies = [];
   List familyMovies = [];
   List musicFilms = [];
+  List dramaSeries = [];
+  List comedySeries = [];
+  List talk = [];
+  List actionSeries = [];
 
   final String apiKey = 'caab8223e29b6c77c16940d6e2ccfa5e';
   final String readAccessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjYWFiODIyM2UyOWI2Yzc3YzE2OTQwZDZlMmNjZmE1ZSIsIm5iZiI6MTczMjgwMDM1Mi43OTc0NTIyLCJzdWIiOiI2NzQ4NmQ2MjJlZDM5YTNhZjE3MWUxYjgiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.14l3iY-IjTx0kJwnE17stnAvxo58nsENZD1-kIoWY7I';
@@ -76,9 +84,11 @@ class _HomepageState extends State<Homepage> {
       Map<String, dynamic> horrorMoviesResult = await tmdbWithCustomLogs.v3.discover.getMovies(withGenres: '27', language: 'en-US') as Map<String, dynamic>;
       Map<String, dynamic> thrillerMoviesResult = await tmdbWithCustomLogs.v3.discover.getMovies(withGenres: '53', language: 'en-US') as Map<String, dynamic>;
       Map<String, dynamic> actionMoviesResult = await tmdbWithCustomLogs.v3.discover.getMovies(withGenres: '28', language: 'en-US') as Map<String, dynamic>;
+      Map<String, dynamic> actionSeriesResult = await tmdbWithCustomLogs.v3.discover.getTvShows(withGenres: '10759', language: 'en-US') as Map<String, dynamic>;
       Map<String, dynamic> adventureMoviesResult = await tmdbWithCustomLogs.v3.discover.getMovies(withGenres: '12', language: 'en-US') as Map<String, dynamic>;
       Map<String, dynamic> animationMoviesResult = await tmdbWithCustomLogs.v3.discover.getMovies(withGenres: '16', language: 'en-US') as Map<String, dynamic>;
       Map<String, dynamic> comedyMoviesResult = await tmdbWithCustomLogs.v3.discover.getMovies(withGenres: '35', language: 'en-US') as Map<String, dynamic>;
+      Map<String, dynamic> comedySeriesResult = await tmdbWithCustomLogs.v3.discover.getTvShows(withGenres: '18', language: 'en-US') as Map<String, dynamic>;
       Map<String, dynamic> romanceMoviesResult = await tmdbWithCustomLogs.v3.discover.getMovies(withGenres: '10749', language: 'en-US') as Map<String, dynamic>;
       Map<String, dynamic> scienceFictionMoviesResult = await tmdbWithCustomLogs.v3.discover.getMovies(withGenres: '878', language: 'en-US') as Map<String, dynamic>;
       Map<String, dynamic> documentaryMoviesResult = await tmdbWithCustomLogs.v3.discover.getMovies(withGenres: '99', language: 'en-US') as Map<String, dynamic>;
@@ -86,8 +96,11 @@ class _HomepageState extends State<Homepage> {
       Map<String, dynamic> mysteryMoviesResult = await tmdbWithCustomLogs.v3.discover.getMovies(withGenres: '9648', language: 'en-US') as Map<String, dynamic>;
       Map<String, dynamic> westernMoviesResult = await tmdbWithCustomLogs.v3.discover.getMovies(withGenres: '37', language: 'en-US') as Map<String, dynamic>;
       Map<String, dynamic> dramaMoviesResult = await tmdbWithCustomLogs.v3.discover.getMovies(withGenres: '18', language: 'en-US') as Map<String, dynamic>;
+      Map<String, dynamic> dramaSeriesResult = await tmdbWithCustomLogs.v3.discover.getTvShows(withGenres: '18', language: 'en-US') as Map<String, dynamic>;
       Map<String, dynamic> familyMoviesResult = await tmdbWithCustomLogs.v3.discover.getMovies(withGenres: '10751', language: 'en-US') as Map<String, dynamic>;
       Map<String, dynamic> musicFilmsResult = await tmdbWithCustomLogs.v3.discover.getMovies(withGenres: '10402', language: 'en-US') as Map<String, dynamic>;
+      Map<String, dynamic> talkSeriesResult = await tmdbWithCustomLogs.v3.discover.getTvShows(withGenres: '10767', language: 'en-US') as Map<String, dynamic>;
+
 
       setState(() {
         trendingMovies = trendingResults['results'];
@@ -111,6 +124,10 @@ class _HomepageState extends State<Homepage> {
         dramaMovies = dramaMoviesResult['results'];
         familyMovies = familyMoviesResult['results'];
         musicFilms = musicFilmsResult['results'];
+        dramaSeries = dramaSeriesResult['results'];
+        comedySeries = comedySeriesResult['results'];
+        talk = talkSeriesResult['results'];
+        actionSeries = actionSeriesResult['results'];
       });
     } catch (e) {
       print("Error loading movies: $e");
@@ -143,17 +160,19 @@ class _HomepageState extends State<Homepage> {
         children: [
           SizedBox(height: height * 0.01),
           TrendingMovies(trending: trendingMovies,),
-          Toprated(topRated: topRatedMovies,),
           TvShows(tv: tvShows,),
-          Popular(popular: popular,),
+          Toprated(topRated: topRatedMovies,),
           TopRatedSeries(topRatedSeries: topRatedSeries,),
+          Popular(popular: popular,),
           UpcomingMovies(upcomingMovies: upcomingMovies,),
           HorrorMovies(horrorMovies: horrorMovies,),
           ThrillerMovies(thrillerMovies: thrillerMovies,),
           ActionMovies(actionMovies: actionMovies,),
-          AdventureMovies(adventureMovies: adventureMovies,),
+          ActionSeries(actionSeries: actionSeries,),
+          AdventureMovies(adventureMovies: adventureMovies),
           AnimationMovies(animationMovies: animationMovies,),
           ComedyMovies(comedyMovies: comedyMovies,),
+          Comedy(comedySeries: comedySeries,),
           RomanceMovies(romanceMovies: romanceMovies,),
           ScienceFictionMovies(sciFiMovies: sciFiMovies,),
           DocumentaryMovies(documentaryMovies: documentaryMovies,),
@@ -161,8 +180,10 @@ class _HomepageState extends State<Homepage> {
           WesternMovies(westernMovies: westernMovies,),
           MysteryMovies(mysteryMovies: mysteryMovies,),
           DramaMovies(dramaMovies: dramaMovies,),
+          Drama(dramaSeries: dramaSeries,),
           FamilyMovies(familyMovies: familyMovies,),
           MusicFilms(musicFilms: musicFilms,),
+          Talk(talkSeries: talk,),
         ],
       ),
     );

@@ -74,6 +74,7 @@ class TvShows extends StatelessWidget {
                             color: Colors.white,
                             fontSize: fontSize * 0.8,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ],
                     ),
