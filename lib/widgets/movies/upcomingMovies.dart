@@ -43,8 +43,8 @@ class UpcomingMovies extends StatelessWidget {
                           bannerUrl: upcomingMovies[index]['backdrop_path'] != null?'https://image.tmdb.org/t/p/w500'+upcomingMovies[index]['backdrop_path'] : '',
                           posterUrl: upcomingMovies[index]['poster_path'] != null?'https://image.tmdb.org/t/p/w500'+upcomingMovies[index]['poster_path'] : '',
                           description: upcomingMovies[index]['overview'] ?? 'No description available',
-                          vote: upcomingMovies[index]['vote_average']?.toString() ?? 'N/A',
-                          launch_on: upcomingMovies[index]['first_air_date'] ?? 'Unknown',
+                          vote: upcomingMovies[index]['vote_average']?.toString() ?? 'Not Rated Yet',
+                          launch_on: upcomingMovies[index]['first_air_date'] ?? upcomingMovies[index]['release_date'],
                         ),
                       ),
                     );
@@ -59,7 +59,7 @@ class UpcomingMovies extends StatelessWidget {
                             borderRadius: BorderRadius.circular(50,),
                             image: DecorationImage(
                               image: NetworkImage(
-                                  'https://image.tmdb.org/t/p/w500'+upcomingMovies[index]['poster_path']
+                                upcomingMovies[index]['poster_path'] != null?'https://image.tmdb.org/t/p/w500'+upcomingMovies[index]['poster_path'] : '',
                               ),
                             ),
                           ),

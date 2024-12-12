@@ -1,4 +1,4 @@
-import 'package:cineflix/HomePage.dart';
+import 'package:cineflix/tabs.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(new MyApp());
@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget{
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(brightness: Brightness.dark),
-      home: Homepage(),
+      home: Tabs(),
     );
   }
 }

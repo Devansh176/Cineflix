@@ -14,7 +14,10 @@ class DocumentaryMovies extends StatelessWidget {
     final padding = width * 0.05;
 
     return Container(
-      padding: EdgeInsets.only(top: padding * 0.8, left: padding * 0.8,),
+      padding: EdgeInsets.only(
+        top: padding * 0.8,
+        left: padding * 0.8,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -26,12 +29,17 @@ class DocumentaryMovies extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: height * 0.02,),
+          SizedBox(
+            height: height * 0.02,
+          ),
           SizedBox(
             height: height * 0.39,
-            child: ListView.builder(
+            child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: documentaryMovies.length,
+              separatorBuilder: (context, index) {
+                return SizedBox(width: width * 0.04,);
+              },
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
@@ -40,8 +48,8 @@ class DocumentaryMovies extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (context) => Description(
                           name: documentaryMovies[index]['original_name'] ?? documentaryMovies[index]['title'],
-                          bannerUrl: documentaryMovies[index]['backdrop_path'] != null?'https://image.tmdb.org/t/p/w500'+documentaryMovies[index]['backdrop_path'] : '',
-                          posterUrl: documentaryMovies[index]['poster_path'] != null?'https://image.tmdb.org/t/p/w500'+documentaryMovies[index]['poster_path'] : '',
+                          bannerUrl:  documentaryMovies[index]['backdrop_path'] != null ? 'https://image.tmdb.org/t/p/w500${documentaryMovies[index]['backdrop_path']}' : '',
+                          posterUrl: documentaryMovies[index]['poster_path'] != null ? 'https://image.tmdb.org/t/p/w500${documentaryMovies[index]['poster_path']}' : '',
                           description: documentaryMovies[index]['overview'] ?? 'No description available',
                           vote: documentaryMovies[index]['vote_average']?.toString() ?? 'N/A',
                           launch_on: documentaryMovies[index]['release_date'] ?? 'Unknown',
@@ -58,15 +66,22 @@ class DocumentaryMovies extends StatelessWidget {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(50,),
                             image: DecorationImage(
+                              fit: BoxFit.cover,
                               image: NetworkImage(
-                                  'https://image.tmdb.org/t/p/w500'+documentaryMovies[index]['poster_path']
+                                documentaryMovies[index]['poster_path'] != null
+                                    ? 'https://image.tmdb.org/t/p/w500${documentaryMovies[index]['poster_path']}'
+                                    : '',
                               ),
+                              onError: (exception, stackTrace) {
+                              },
                             ),
                           ),
                         ),
-                        SizedBox(height: height * 0.025,),
+                        SizedBox(
+                          height: height * 0.025,
+                        ),
                         Text(
-                          documentaryMovies[index]['original_name'] != null? documentaryMovies[index]['original_name'] : documentaryMovies[index]['title'],
+                          documentaryMovies[index]['original_name'] ?? documentaryMovies[index]['title'] ?? 'Untitled',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: fontSize * 0.8,
