@@ -1,7 +1,6 @@
 import 'package:cineflix/hindiMovies.dart';
 import 'package:cineflix/hindiSeries.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class Homepage2 extends StatefulWidget {
   const Homepage2({super.key});
