@@ -6,6 +6,7 @@ import 'package:cineflix/widgets/series/hindi/hindiDramaSeries.dart';
 import 'package:cineflix/widgets/series/hindi/hindiFamilySeries.dart';
 import 'package:cineflix/widgets/series/hindi/hindiMysterySeries.dart';
 import 'package:cineflix/widgets/series/hindi/hindiRealityShow.dart';
+import 'package:cineflix/widgets/series/hindi/hindiRomanceSeries.dart';
 import 'package:cineflix/widgets/series/hindi/hindiTalkShow.dart';
 import 'package:cineflix/widgets/series/hindi/hindiTopRatedSeries.dart';
 import 'package:cineflix/widgets/series/hindi/hindiTvShow.dart';
@@ -105,30 +106,45 @@ class _HindiSeriesState extends State<HindiSeries> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final height = screenSize.height;
-
     return Scaffold(
       backgroundColor: Colors.black,
-      body: ListView(
-        children: [
-          SizedBox(height: height * 0.01),
-          SizedBox(height: height * 0.01),
-          HindiTvShows(hindiTvShow: hindiSeriesData['hindiTvShows']!),
-          HindiTopRatedSeries(hindiTopRatedSeries: hindiSeriesData['hindiTopRatedSeries']!),
-          HindiActionSeries(hindiActionSeries: hindiSeriesData['hindiActionSeries']!),
-          HindiAnimationSeries(hindiAnimationSeries: hindiSeriesData['hindiAnimationSeries']!),
-          HindiComedySeries(hindiComedySeries: hindiSeriesData['hindiComedySeries']!),
-          HindiComedySeries(hindiComedySeries: hindiSeriesData['hindiRomanceSeries']!),
-          HindiDocSeries(hindiDocumentarySeries: hindiSeriesData['hindiDocumentarySeries']!),
-          // HindiWesternSeries(hindiWesternSeries: hindiSeriesData['hindiWesternSeries']!),
-          HindiMysterySeries(hindiMysterySeries: hindiSeriesData['hindiMysterySeries']!),
-          HindiDramaSeries(hindiDramaSeries: hindiSeriesData['hindiDramaSeries']!),
-          HindiFamilyShow(hindiFamilyShow: hindiSeriesData['hindiFamilySeries']!),
-          HindiTalkShow(hindiTalkSeries: hindiSeriesData['hindiTalkSeries']!),
-          HindiRealityShow(hindiRealityShow: hindiSeriesData['hindiRealitySeries']!),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: HindiTvShows(hindiTvShow: hindiSeriesData['hindiTvShows']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiTopRatedSeries(hindiTopRatedSeries: hindiSeriesData['hindiTopRatedSeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiActionSeries(hindiActionSeries: hindiSeriesData['hindiActionSeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiAnimationSeries(hindiAnimationSeries: hindiSeriesData['hindiAnimationSeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiComedySeries(hindiComedySeries: hindiSeriesData['hindiComedySeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiDocSeries(hindiDocumentarySeries: hindiSeriesData['hindiDocumentarySeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiMysterySeries(hindiMysterySeries: hindiSeriesData['hindiMysterySeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiDramaSeries(hindiDramaSeries: hindiSeriesData['hindiDramaSeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiFamilyShow(hindiFamilyShow: hindiSeriesData['hindiFamilySeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiTalkShow(hindiTalkSeries: hindiSeriesData['hindiTalkSeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiRealityShow(hindiRealityShow: hindiSeriesData['hindiRealitySeries']!),
+          ),
         ],
-      )
+      ),
     );
   }
 }

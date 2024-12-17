@@ -124,33 +124,67 @@ class _EngMoviesState extends State<EngMovies> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final height = screenSize.height;
-
     return Scaffold(
       backgroundColor: Colors.black,
-      body: ListView(
-        children: [
-          SizedBox(height: height * 0.01),
-          TrendingMovies(trending: englishMoviesData['trendingMovies']!,),
-          TopRated(topRated: englishMoviesData['topRatedMovies']!,),
-          Popular(popular: englishMoviesData['popularMovies']!),
-          UpcomingMovies(upcomingMovies: englishMoviesData['upcomingMovies']!),
-          HorrorMovies(horrorMovies: englishMoviesData['horrorMovies']!),
-          ThrillerMovies(thrillerMovies: englishMoviesData['thrillerMovies']!),
-          ActionMovies(actionMovies: englishMoviesData['actionMovies']!),
-          AdventureMovies(adventureMovies: englishMoviesData['adventureMovies']!),
-          AnimationMovies(animationMovies: englishMoviesData['animationMovies']!),
-          ComedyMovies(comedyMovies: englishMoviesData['comedyMovies']!),
-          RomanceMovies(romanceMovies: englishMoviesData['romanceMovies']!),
-          ScienceFictionMovies(sciFiMovies: englishMoviesData['sciFiMovies']!),
-          DocumentaryMovies(documentaryMovies: englishMoviesData['documentaryMovies']!),
-          HistoryMovies(historyMovies: englishMoviesData['historyMovies']!),
-          WesternMovies(westernMovies: englishMoviesData['westernMovies']!),
-          MysteryMovies(mysteryMovies: englishMoviesData['mysteryMovies']!,),
-          DramaMovies(dramaMovies: englishMoviesData['dramaMovies']!,),
-          FamilyMovies(familyMovies: englishMoviesData['familyMovies']!,),
-          MusicFilms(musicFilms: englishMoviesData['musicFilms']!,),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: TrendingMovies(trending: englishMoviesData['trendingMovies']!,),
+          ),
+          SliverToBoxAdapter(
+            child: TopRated(topRated: englishMoviesData['topRatedMovies']!,),
+          ),
+          SliverToBoxAdapter(
+            child: Popular(popular: englishMoviesData['popularMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: UpcomingMovies(upcomingMovies: englishMoviesData['upcomingMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: HorrorMovies(horrorMovies: englishMoviesData['horrorMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: ThrillerMovies(thrillerMovies: englishMoviesData['thrillerMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: ActionMovies(actionMovies: englishMoviesData['actionMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: AdventureMovies(adventureMovies: englishMoviesData['adventureMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: AnimationMovies(animationMovies: englishMoviesData['animationMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: ComedyMovies(comedyMovies: englishMoviesData['comedyMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: RomanceMovies(romanceMovies: englishMoviesData['romanceMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: DocumentaryMovies(documentaryMovies: englishMoviesData['documentaryMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: ScienceFictionMovies(sciFiMovies: englishMoviesData['sciFiMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: HistoryMovies(historyMovies: englishMoviesData['historyMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: WesternMovies(westernMovies: englishMoviesData['westernMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: MysteryMovies(mysteryMovies: englishMoviesData['mysteryMovies']!,),
+          ),
+          SliverToBoxAdapter(
+            child: DramaMovies(dramaMovies: englishMoviesData['dramaMovies']!,),
+          ),
+          SliverToBoxAdapter(
+            child: FamilyMovies(familyMovies: englishMoviesData['familyMovies']!,),
+          ),
+          SliverToBoxAdapter(
+            child: MusicFilms(musicFilms: englishMoviesData['musicFilms']!,),
+          ),
         ],
       ),
     );

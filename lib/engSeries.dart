@@ -106,27 +106,49 @@ class _EngSeriesState extends State<EngSeries> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final height = screenSize.height;
-
     return Scaffold(
       backgroundColor: Colors.black,
-      body: ListView(
-        children: [
-          SizedBox(height: height * 0.01),
-          TvShows(tv: englishSeriesData['tvShows']!),
-          TopRatedSeries(topRatedSeries: englishSeriesData['topRatedSeries']!),
-          ActionSeries(actionSeries: englishSeriesData['actionSeries']!),
-          AnimationSeries(animationSeries: englishSeriesData['animationSeries']!),
-          Comedy(comedySeries: englishSeriesData['comedySeries']!),
-          RomanceSeries(romanceSeries: englishSeriesData['romanceSeries']!),
-          DocSeries(documentarySeries: englishSeriesData['documentarySeries']!),
-          WesternSeries(westernSeries: englishSeriesData['westernSeries']!),
-          MysterySeries(mysterySeries: englishSeriesData['mysterySeries']!),
-          Drama(dramaSeries: englishSeriesData['dramaSeries']!),
-          FamilyShow(familyShow: englishSeriesData['familySeries']!),
-          Talk(talkSeries: englishSeriesData['talkSeries']!),
-          Reality(realityShow: englishSeriesData['realitySeries']!),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: TvShows(tv: englishSeriesData['tvShows']!),
+          ),
+          SliverToBoxAdapter(
+            child: TopRatedSeries(topRatedSeries: englishSeriesData['topRatedSeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: ActionSeries(actionSeries: englishSeriesData['actionSeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: AnimationSeries(animationSeries: englishSeriesData['animationSeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: Comedy(comedySeries: englishSeriesData['comedySeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: RomanceSeries(romanceSeries: englishSeriesData['romanceSeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: DocSeries(documentarySeries: englishSeriesData['documentarySeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: WesternSeries(westernSeries: englishSeriesData['westernSeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: MysterySeries(mysterySeries: englishSeriesData['mysterySeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: Drama(dramaSeries: englishSeriesData['dramaSeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: FamilyShow(familyShow: englishSeriesData['familySeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: Talk(talkSeries: englishSeriesData['talkSeries']!),
+          ),
+          SliverToBoxAdapter(
+            child: Reality(realityShow: englishSeriesData['realitySeries']!),
+          ),
         ],
       ),
     );

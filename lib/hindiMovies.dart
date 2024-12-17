@@ -190,30 +190,55 @@ class _HindiMoviesState extends State<HindiMovies> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final height = screenSize.height;
-
     return Scaffold(
       backgroundColor: Colors.black,
-      body: ListView(
-        children: [
-          SizedBox(height: height * 0.01),
-
-          HindiUpcomingMovies(hindiUpcomingMovies: hindiMoviesData['upcomingHindiMovies']!),
-          HindiHorrorMovies(hindiHorrorMovies: hindiMoviesData['horrorHindiMovies']!),
-          HindiThrillerMovies(hindiThrillerMovies: hindiMoviesData['thrillerHindiMovies']!),
-          HindiAdventureMovies(hindiAdventureMovies: hindiMoviesData['adventureHindiMovies']!),
-          HindiAnimationMovies(hindiAnimationMovies: hindiMoviesData['animationHindiMovies']!),
-          HindiComedyMovies(hindiComedyMovies: hindiMoviesData['comedyHindiMovies']!),
-          HindiRomanceMovies(hindiRomanceMovies: hindiMoviesData['romanceHindiMovies']!),
-          HindiScienceFictionMovies(hindiSciFiMovies: hindiMoviesData['sciFiHindiMovies']!),
-          HindiDocumentaryMovies(hindiDocumentaryMovies: hindiMoviesData['documentaryHindiMovies']!),
-          HindiHistoryMovies(hindiHistoryMovies: hindiMoviesData['historyHindiMovies']!),
-          HindiWesternMovies(hindiWesternMovies: hindiMoviesData['westernHindiMovies']!),
-          HindiMysteryMovies(hindiMysteryMovies: hindiMoviesData['mysteryHindiMovies']!,),
-          HindiDramaMovies(hindiDramaMovies: hindiMoviesData['dramaHindiMovies']!,),
-          HindiFamilyMovies(hindiFamilyMovies: hindiMoviesData['familyHindiMovies']!,),
-          HindiMusicFilms(hindiMusicFilms: hindiMoviesData['musicHindiFilms']!,),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: HindiUpcomingMovies(hindiUpcomingMovies: hindiMoviesData['upcomingHindiMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiHorrorMovies(hindiHorrorMovies: hindiMoviesData['horrorHindiMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiThrillerMovies(hindiThrillerMovies: hindiMoviesData['thrillerHindiMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiAdventureMovies(hindiAdventureMovies: hindiMoviesData['adventureHindiMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiAnimationMovies(hindiAnimationMovies: hindiMoviesData['animationHindiMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiComedyMovies(hindiComedyMovies: hindiMoviesData['comedyHindiMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiRomanceMovies(hindiRomanceMovies: hindiMoviesData['romanceHindiMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiScienceFictionMovies(hindiSciFiMovies: hindiMoviesData['sciFiHindiMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiDocumentaryMovies(hindiDocumentaryMovies: hindiMoviesData['documentaryHindiMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiHistoryMovies(hindiHistoryMovies: hindiMoviesData['historyHindiMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiWesternMovies(hindiWesternMovies: hindiMoviesData['westernHindiMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: HindiMysteryMovies(hindiMysteryMovies: hindiMoviesData['mysteryHindiMovies']!,),
+          ),
+          SliverToBoxAdapter(
+            child: HindiDramaMovies(hindiDramaMovies: hindiMoviesData['dramaHindiMovies']!,),
+          ),
+          SliverToBoxAdapter(
+            child: HindiFamilyMovies(hindiFamilyMovies: hindiMoviesData['familyHindiMovies']!,),
+          ),
+          SliverToBoxAdapter(
+            child: HindiMusicFilms(hindiMusicFilms: hindiMoviesData['musicHindiFilms']!,),
+          ),
         ],
       ),
     );
