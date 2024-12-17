@@ -1,4 +1,4 @@
-# cineflix
+# cineflex
 
 A new Flutter project.
 
