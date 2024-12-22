@@ -13,158 +13,197 @@ class AdventureMovies extends StatefulWidget {
 
 class _AdventureMoviesState extends State<AdventureMovies> {
   late Box adventureBox;
-  List cachedAdventureMovies = [];
   bool isHiveInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    initializeHive();
-    print("Widget adventureMovies: ${widget.adventureMovies.length}");
+    _initializeHiveOnce();
   }
 
-  Future<void> initializeHive() async {
-    try {
-      print("Opening Hive Box...");
-      adventureBox = await Hive.openBox('AdventureMoviesBox');
-      print("Hive Box Opened Successfully");
-    } catch (e) {
-      print("Error initializing Hive : $e");
-    } finally {
-      if (mounted) {
+  Future<void> _initializeHiveOnce() async {
+    if (!isHiveInitialized) {
+      try {
+        if (Hive.isBoxOpen('AdventureMoviesBox')) {
+          adventureBox = Hive.box('AdventureMoviesBox');
+        } else {
+          adventureBox = await Hive.openBox('AdventureMoviesBox');
+        }
         setState(() {
           isHiveInitialized = true;
         });
-        // Load movies after initializing Hive
-        loadMovies();
+      } catch (e) {
+        print("Error initializing Hive: $e");
       }
     }
   }
 
-  void loadMovies() {
-    final cachedData = adventureBox.get('adventureMovies');
-    if (cachedData != null && cachedData.isNotEmpty) {
-      print("Cached data found: ${cachedData.length}");
-      setState(() {
-        cachedAdventureMovies = List.from(cachedData);
-      });
-    } else {
-      print("No cached data found. Using passed adventureMovies.");
-      setState(() {
-        cachedAdventureMovies = widget.adventureMovies;
-      });
-      adventureBox.put('adventureMovies', widget.adventureMovies);
+  Future<List> loadMovies() async {
+    try {
+      if (!isHiveInitialized) {
+        await _initializeHiveOnce();
+      }
+
+      final cachedData = adventureBox.get('adventureMovies');
+      final cachedTimestamp = adventureBox.get('adventureMoviesTimestamp');
+
+      if (cachedData != null && cachedData.isNotEmpty && cachedTimestamp != null) {
+        final currentTime = DateTime.now();
+        final cacheTime = DateTime.parse(cachedTimestamp);
+        final difference = currentTime.difference(cacheTime).inDays;
+
+        if (difference <= 3) {
+          return List.from(cachedData);
+        }
+      }
+
+      await adventureBox.put('adventureMovies', widget.adventureMovies);
+      await adventureBox.put('adventureMoviesTimestamp', DateTime.now().toIso8601String());
+
+      return widget.adventureMovies;
+    } catch (e) {
+      return [];
     }
+  }
+
+  String getValidImageUrl(String? url) {
+    return (url != null && url.isNotEmpty)
+        ? 'https://image.tmdb.org/t/p/w500$url'
+        : 'https://via.placeholder.com/300';
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!isHiveInitialized) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-
-    print("Rendering movies: ${cachedAdventureMovies.length}");
-
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
     final height = screenSize.height;
     final fontSize = width * 0.05;
     final padding = width * 0.05;
 
-    String getValidImageUrl(String? url) {
-      return (url != null && url.isNotEmpty)
-          ? 'https://image.tmdb.org/t/p/w500$url'
-          : 'https://via.placeholder.com/300';
-    }
-
-    return Container(
-      padding: EdgeInsets.only(top: padding * 0.8, left: padding * 0.8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Adventure Movies',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: fontSize * 1.22,
-              fontWeight: FontWeight.bold,
+    return FutureBuilder<List>(
+      future: loadMovies(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Failed to load movies. Please try again.',
+                  style: TextStyle(color: Colors.white),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {});
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
             ),
-          ),
-          SizedBox(height: height * 0.02),
-          cachedAdventureMovies.isEmpty
-              ? Center(
+          );
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(
             child: Text(
-              'No movies available',
-              style: TextStyle(color: Colors.white, fontSize: fontSize),
+              'No movies available.',
+              style: TextStyle(color: Colors.white),
             ),
-          )
-              : SizedBox(
-            height: height * 0.36,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: cachedAdventureMovies.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Description(
-                          name: cachedAdventureMovies[index]['original_name'] ??
-                              cachedAdventureMovies[index]['title'],
-                          bannerUrl: cachedAdventureMovies[index]['backdrop_path'] != null
-                              ? 'https://image.tmdb.org/t/p/w500' + cachedAdventureMovies[index]['backdrop_path']
-                              : '',
-                          posterUrl: cachedAdventureMovies[index]['poster_path'] != null
-                              ? 'https://image.tmdb.org/t/p/w500' + cachedAdventureMovies[index]['poster_path']
-                              : '',
-                          description: cachedAdventureMovies[index]['overview'] ?? 'No description available',
-                          vote: cachedAdventureMovies[index]['vote_average']?.toString() ?? 'N/A',
-                          launch_on: cachedAdventureMovies[index]['release_date'] ?? 'Unknown',
+          );
+        }
+
+        final movies = snapshot.data!;
+        return Container(
+          padding: EdgeInsets.only(
+            top: padding * 0.8,
+            left: padding * 0.8,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Adventure Movies',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: fontSize * 1.22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: height * 0.02,
+              ),
+              SizedBox(
+                height: height * 0.39,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: movies.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Description(
+                              name: movies[index]['original_name'] ??
+                                  movies[index]['title'],
+                              bannerUrl: getValidImageUrl(
+                                  movies[index]['backdrop_path']),
+                              posterUrl: getValidImageUrl(
+                                  movies[index]['poster_path']),
+                              description: movies[index]['overview'] ??
+                                  'No description available',
+                              vote: movies[index]['vote_average']?.toString() ??
+                                  'N/A',
+                              launch_on:
+                              movies[index]['release_date'] ?? 'Unknown',
+                            ),
+                          ),
+                        );
+                      },
+                      child: SizedBox(
+                        width: width * 0.4,
+                        child: Column(
+                          children: [
+                            Container(
+                              height: height * 0.25,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: CachedNetworkImage(
+                                imageUrl: getValidImageUrl(
+                                    movies[index]['poster_path']),
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) =>
+                                const Center(child: Text("")),
+                                errorWidget: (context, url, error) =>
+                                const Icon(Icons.error, color: Colors.grey),
+                              ),
+                            ),
+                            SizedBox(
+                              height: height * 0.025,
+                            ),
+                            Text(
+                              movies[index]['original_name'] ??
+                                  movies[index]['title'],
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: fontSize * 0.8,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
                       ),
                     );
                   },
-                  child: SizedBox(
-                    width: width * 0.4,
-                    child: Column(
-                      children: [
-                        Container(
-                          height: height * 0.25,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: CachedNetworkImage(
-                            imageUrl: getValidImageUrl(cachedAdventureMovies[index]['poster_path']),
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                            errorWidget: (context, url, error) =>
-                            const Icon(Icons.error, color: Colors.grey),
-                          ),
-                        ),
-                        SizedBox(height: height * 0.025),
-                        Text(
-                          cachedAdventureMovies[index]['original_name'] ??
-                              cachedAdventureMovies[index]['title'],
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: fontSize * 0.8,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

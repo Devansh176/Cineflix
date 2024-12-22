@@ -44,6 +44,11 @@ dependencies:
   hive_flutter: ^1.1.0
   hive_generator: ^2.0.1
   build_runner: ^2.4.13
+  provider: ^6.1.2
+  sqflite: ^2.4.1
+  path_provider: ^2.1.5
+  path: ^1.9.0
+  intl: ^0.20.1
 
 dev_dependencies:
   flutter_test:

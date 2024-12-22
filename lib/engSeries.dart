@@ -83,7 +83,7 @@ class _EngSeriesState extends State<EngSeries> {
 
       for (var category in categories.keys) {
         final cachedData = englishSeriesBox.get(category);
-        if (cachedData != null) {
+        if (cachedData != null && cachedData.isNotEmpty) {
           englishSeriesData[category] = cachedData;
         } else {
           final response = await categories[category]!();
@@ -111,7 +111,7 @@ class _EngSeriesState extends State<EngSeries> {
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: TvShows(tv: englishSeriesData['tvShows']!),
+            child: TvShows(tvShows: englishSeriesData['tvShows']!),
           ),
           SliverToBoxAdapter(
             child: TopRatedSeries(topRatedSeries: englishSeriesData['topRatedSeries']!),
@@ -123,13 +123,13 @@ class _EngSeriesState extends State<EngSeries> {
             child: AnimationSeries(animationSeries: englishSeriesData['animationSeries']!),
           ),
           SliverToBoxAdapter(
-            child: Comedy(comedySeries: englishSeriesData['comedySeries']!),
+            child: ComedySeries(comedySeries: englishSeriesData['comedySeries']!),
           ),
           SliverToBoxAdapter(
             child: RomanceSeries(romanceSeries: englishSeriesData['romanceSeries']!),
           ),
           SliverToBoxAdapter(
-            child: DocSeries(documentarySeries: englishSeriesData['documentarySeries']!),
+            child: DocumentarySeries(documentarySeries: englishSeriesData['documentarySeries']!),
           ),
           SliverToBoxAdapter(
             child: WesternSeries(westernSeries: englishSeriesData['westernSeries']!),
@@ -138,16 +138,16 @@ class _EngSeriesState extends State<EngSeries> {
             child: MysterySeries(mysterySeries: englishSeriesData['mysterySeries']!),
           ),
           SliverToBoxAdapter(
-            child: Drama(dramaSeries: englishSeriesData['dramaSeries']!),
+            child: DramaSeries(dramaSeries: englishSeriesData['dramaSeries']!),
           ),
           SliverToBoxAdapter(
-            child: FamilyShow(familyShow: englishSeriesData['familySeries']!),
+            child: FamilySeries(familySeries: englishSeriesData['familySeries']!),
           ),
           SliverToBoxAdapter(
-            child: Talk(talkSeries: englishSeriesData['talkSeries']!),
+            child: TalkShow(talkShow: englishSeriesData['talkSeries']!),
           ),
           SliverToBoxAdapter(
-            child: Reality(realityShow: englishSeriesData['realitySeries']!),
+            child: RealityShow(realityShow: englishSeriesData['realitySeries']!),
           ),
         ],
       ),

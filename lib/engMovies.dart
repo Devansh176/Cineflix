@@ -55,7 +55,7 @@ class _EngMoviesState extends State<EngMovies> {
   };
 
   final String apiKey = 'caab8223e29b6c77c16940d6e2ccfa5e';
-  final String readAccessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjYWFiODIyM2UyOWI2Yzc3YzE2OTQwZDZlMmNjZmE1ZSIsIm5iZiI6MTczMjgwMDM1Mi43OTc0NTIyLCJzdWIiOiI2NzQ4NmQ2MjJlZDM5YTNhZjE3MWUxYjgiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.14l3iY-IjTx0kJwnE17stnAvxo58nsENZD1-kIoWY7I';
+  final String readAccessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjYWFiODIyM2UyOWI2Yzc3YzE2OTQwZDZlMmNjZmE1ZSIsIm5iZiI6MTczMjc5OTg0Mi41NzYsInN1YiI6IjY3NDg2ZDYyMmVkMzlhM2FmMTcxZTFiOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.EYnIzQkuqB3oQtFYdJHn1xg7bVXxkqf6eCg7SGw5yFo';
 
   late TMDB tmdbWithCustomLogs;
 
@@ -100,19 +100,29 @@ class _EngMoviesState extends State<EngMovies> {
       };
 
       for (var category in categories.keys) {
+        print("Checking Hive cache for category: $category");
         final cachedData = englishMoviesBox.get(category);
-        if (cachedData != null) {
+
+        if (cachedData != null && cachedData.isNotEmpty) {
+          print("Using cached data for $category: ${cachedData.length} items");
           englishMoviesData[category] = cachedData;
         } else {
+          print("No cached data for $category. Fetching from API...");
           final response = await categories[category]!();
           final results = response['results'];
-          englishMoviesData[category] = results;
-          await englishMoviesBox.put(category, results);
+          if (results != null) {
+            print("Fetched ${results.length} items for $category");
+            englishMoviesData[category] = results;
+            await englishMoviesBox.put(category, results);
+          } else {
+            print("No results from API for $category");
+          }
         }
       }
+
       setState(() {});
     } catch (e) {
-      print("Error Loading Movies : $e");
+      print("Error Loading Movies: $e");
     }
   }
 
@@ -129,16 +139,16 @@ class _EngMoviesState extends State<EngMovies> {
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: TrendingMovies(trending: englishMoviesData['trendingMovies']!,),
-          ),
-          SliverToBoxAdapter(
-            child: TopRated(topRated: englishMoviesData['topRatedMovies']!,),
-          ),
-          SliverToBoxAdapter(
-            child: Popular(popular: englishMoviesData['popularMovies']!),
+            child: TrendingMovies(trendingMovies: englishMoviesData['trendingMovies']!,),
           ),
           SliverToBoxAdapter(
             child: UpcomingMovies(upcomingMovies: englishMoviesData['upcomingMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: PopularMovies(popularMovies: englishMoviesData['popularMovies']!),
+          ),
+          SliverToBoxAdapter(
+            child: TopRatedMovies(topRatedMovies: englishMoviesData['topRatedMovies']!,),
           ),
           SliverToBoxAdapter(
             child: HorrorMovies(horrorMovies: englishMoviesData['horrorMovies']!),
@@ -165,7 +175,7 @@ class _EngMoviesState extends State<EngMovies> {
             child: DocumentaryMovies(documentaryMovies: englishMoviesData['documentaryMovies']!),
           ),
           SliverToBoxAdapter(
-            child: ScienceFictionMovies(sciFiMovies: englishMoviesData['sciFiMovies']!),
+            child: ScienceFictionMovies(scienceFictionMovies: englishMoviesData['sciFiMovies']!),
           ),
           SliverToBoxAdapter(
             child: HistoryMovies(historyMovies: englishMoviesData['historyMovies']!),

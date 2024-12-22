@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 class HindiHorrorMovies extends StatefulWidget {
-  const HindiHorrorMovies({super.key, required this.hindiHorrorMovies});
-  final List hindiHorrorMovies;
+  const HindiHorrorMovies({super.key, required this.horrorHindiMovies});
+  final List horrorHindiMovies;
 
   @override
   State<HindiHorrorMovies> createState() => _HindiHorrorMoviesState();
@@ -13,143 +13,201 @@ class HindiHorrorMovies extends StatefulWidget {
 
 class _HindiHorrorMoviesState extends State<HindiHorrorMovies> {
   late Box horrorBox;
-  List cachedHorrorMovies = [];
   bool isHiveInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    initializeHive();
-    print("Widget horrorMovies: ${widget.hindiHorrorMovies.length}");
+    _initializeHiveOnce();
   }
 
-  Future<void> initializeHive() async {
-    try {
-      print("Opening Hive Box...");
-      horrorBox = await Hive.openBox('HorrorMoviesBox');
-      print("Horror Hive Box Opened Successfully");
-    } catch (e) {
-      print("Error initializing Hive : $e");
-    } finally {
-      if (mounted) {
+  /// Ensures Hive is initialized only once
+  Future<void> _initializeHiveOnce() async {
+    if (!isHiveInitialized) {
+      try {
+        if (Hive.isBoxOpen('HorrorMoviesBox')) {
+          print("Hive Box is already opened.");
+          horrorBox = Hive.box('HorrorMoviesBox');
+        } else {
+          print("Opening Hive Box...");
+          horrorBox = await Hive.openBox('HorrorMoviesBox');
+          print("Hive Box Opened Successfully");
+        }
         setState(() {
           isHiveInitialized = true;
         });
-        loadMovies();
+      } catch (e) {
+        print("Error initializing Hive: $e");
       }
     }
   }
 
-  void loadMovies() {
-    final cachedData = horrorBox.get('horrorHindiMovies');
-    if (cachedData != null && cachedData.isNotEmpty) {
-      print("Cached data found in horror : ${cachedData.length}");
-      setState(() {
-        cachedHorrorMovies = List.from(cachedData);
-      });
-    } else {
-      print("No cached data found. Using passed horrorMovies.");
-      setState(() {
-        cachedHorrorMovies = widget.hindiHorrorMovies;
-      });
-      horrorBox.put('horrorHindiMovies', widget.hindiHorrorMovies);
-      print("HorrorMovies data saved to Hive: ${widget.hindiHorrorMovies.length}");
+  Future<List> loadMovies() async {
+    try {
+      if (!isHiveInitialized) {
+        await _initializeHiveOnce();
+      }
+
+      final cachedData = horrorBox.get('horrorHindiMovies');
+      final cachedTimestamp = horrorBox.get('horrorHindiMoviesTimestamp');
+
+      if (cachedData != null && cachedData.isNotEmpty && cachedTimestamp != null) {
+        final currentTime = DateTime.now();
+        final cacheTime = DateTime.parse(cachedTimestamp);
+        final difference = currentTime.difference(cacheTime).inDays;
+
+        if (difference <= 3) {
+          return List.from(cachedData);
+        }
+      }
+
+      await horrorBox.put('horrorHindiMovies', widget.horrorHindiMovies);
+      await horrorBox.put('horrorHindiMoviesTimestamp', DateTime.now().toIso8601String());
+
+      return widget.horrorHindiMovies;
+    } catch (e) {
+      return [];
     }
+  }
+
+  String getValidImageUrl(String? url) {
+    return (url != null && url.isNotEmpty)
+        ? 'https://image.tmdb.org/t/p/w500$url'
+        : 'https://via.placeholder.com/300';
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!isHiveInitialized) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-    print("Rendering horror movies: ${cachedHorrorMovies.length}");
-
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
     final height = screenSize.height;
     final fontSize = width * 0.05;
     final padding = width * 0.05;
 
-    String getValidImageUrl(String? url) {
-      return (url != null && url.isNotEmpty)
-          ? 'https://image.tmdb.org/t/p/w500$url'
-          : 'https://via.placeholder.com/300';
-    }
-
-    return Container(
-      padding: EdgeInsets.only(top: padding * 0.8, left: padding * 0.8,),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Horror Movies',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: fontSize * 1.22,
-              fontWeight: FontWeight.bold,
+    return FutureBuilder<List>(
+      future: loadMovies(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Failed to load movies. Please try again.',
+                  style: TextStyle(color: Colors.white),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {});
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
             ),
+          );
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text(
+              'No movies available.',
+              style: TextStyle(color: Colors.white),
+            ),
+          );
+        }
+
+        final movies = snapshot.data!;
+        return Container(
+          padding: EdgeInsets.only(
+            top: padding * 0.8,
+            left: padding * 0.8,
           ),
-          SizedBox(height: height * 0.02,),
-          SizedBox(
-            height: height * 0.36,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: cachedHorrorMovies.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Description(
-                          name: cachedHorrorMovies[index]['original_name'] ?? cachedHorrorMovies[index]['title'],
-                          bannerUrl: cachedHorrorMovies[index]['backdrop_path'] != null?'https://image.tmdb.org/t/p/w500'+cachedHorrorMovies[index]['backdrop_path'] : '',
-                          posterUrl: cachedHorrorMovies[index]['poster_path'] != null?'https://image.tmdb.org/t/p/w500'+cachedHorrorMovies[index]['poster_path'] : '',
-                          description: cachedHorrorMovies[index]['overview'] ?? 'No description available',
-                          vote: cachedHorrorMovies[index]['vote_average']?.toString() ?? 'N/A',
-                          launch_on: cachedHorrorMovies[index]['release_date'] ?? 'Unknown',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Horror Movies',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: fontSize * 1.22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: height * 0.02,
+              ),
+              SizedBox(
+                height: height * 0.39,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: movies.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Description(
+                              name: movies[index]['original_name'] ??
+                                  movies[index]['title'],
+                              bannerUrl: getValidImageUrl(
+                                  movies[index]['backdrop_path']),
+                              posterUrl: getValidImageUrl(
+                                  movies[index]['poster_path']),
+                              description: movies[index]['overview'] ??
+                                  'No description available',
+                              vote: movies[index]['vote_average']?.toString() ??
+                                  'N/A',
+                              launch_on:
+                              movies[index]['release_date'] ?? 'Unknown',
+                            ),
+                          ),
+                        );
+                      },
+                      child: SizedBox(
+                        width: width * 0.4,
+                        child: Column(
+                          children: [
+                            Container(
+                              height: height * 0.25,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: CachedNetworkImage(
+                                imageUrl: getValidImageUrl(
+                                    movies[index]['poster_path']),
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) =>
+                                const Center(child: Text("")),
+                                errorWidget: (context, url, error) =>
+                                const Icon(Icons.error, color: Colors.grey),
+                              ),
+                            ),
+                            SizedBox(
+                              height: height * 0.025,
+                            ),
+                            Text(
+                              movies[index]['original_name'] ??
+                                  movies[index]['title'],
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: fontSize * 0.8,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
                       ),
                     );
                   },
-                  child: SizedBox(
-                    width: width * 0.4,
-                    child: Column(
-                      children: [
-                        Container(
-                          height: height * 0.25,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50,),
-                          ),
-                          child: CachedNetworkImage(
-                            imageUrl: getValidImageUrl(cachedHorrorMovies[index]['poster_path'],),
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                            errorWidget: (context, url, error) => Icon(Icons.error, color: Colors.grey),
-                          ),
-                        ),
-                        SizedBox(height: height * 0.025,),
-                        Text(
-                          cachedHorrorMovies[index]['original_name'] != null? cachedHorrorMovies[index]['original_name'] : cachedHorrorMovies[index]['title'],
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: fontSize * 0.8,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          )
-        ],
-      ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

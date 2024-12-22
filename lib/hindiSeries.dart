@@ -6,11 +6,9 @@ import 'package:cineflix/widgets/series/hindi/hindiDramaSeries.dart';
 import 'package:cineflix/widgets/series/hindi/hindiFamilySeries.dart';
 import 'package:cineflix/widgets/series/hindi/hindiMysterySeries.dart';
 import 'package:cineflix/widgets/series/hindi/hindiRealityShow.dart';
-import 'package:cineflix/widgets/series/hindi/hindiRomanceSeries.dart';
 import 'package:cineflix/widgets/series/hindi/hindiTalkShow.dart';
 import 'package:cineflix/widgets/series/hindi/hindiTopRatedSeries.dart';
 import 'package:cineflix/widgets/series/hindi/hindiTvShow.dart';
-import 'package:cineflix/widgets/series/hindi/hindiWesternSeries.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -82,7 +80,7 @@ class _HindiSeriesState extends State<HindiSeries> {
 
       for (var category in categories.keys) {
         final cachedData = hindiSeriesBox.get(category);
-        if (cachedData != null) {
+        if (cachedData != null && cachedData.isNotEmpty) {
           hindiSeriesData[category] = cachedData;
         } else {
           final response = await categories[category]!();
@@ -111,7 +109,7 @@ class _HindiSeriesState extends State<HindiSeries> {
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: HindiTvShows(hindiTvShow: hindiSeriesData['hindiTvShows']!),
+            child: HindiTvShows(hindiTvShows: hindiSeriesData['hindiTvShows']!),
           ),
           SliverToBoxAdapter(
             child: HindiTopRatedSeries(hindiTopRatedSeries: hindiSeriesData['hindiTopRatedSeries']!),
@@ -126,7 +124,7 @@ class _HindiSeriesState extends State<HindiSeries> {
             child: HindiComedySeries(hindiComedySeries: hindiSeriesData['hindiComedySeries']!),
           ),
           SliverToBoxAdapter(
-            child: HindiDocSeries(hindiDocumentarySeries: hindiSeriesData['hindiDocumentarySeries']!),
+            child: HindiDocumentarySeries(hindiDocumentarySeries: hindiSeriesData['hindiDocumentarySeries']!),
           ),
           SliverToBoxAdapter(
             child: HindiMysterySeries(hindiMysterySeries: hindiSeriesData['hindiMysterySeries']!),
@@ -135,10 +133,10 @@ class _HindiSeriesState extends State<HindiSeries> {
             child: HindiDramaSeries(hindiDramaSeries: hindiSeriesData['hindiDramaSeries']!),
           ),
           SliverToBoxAdapter(
-            child: HindiFamilyShow(hindiFamilyShow: hindiSeriesData['hindiFamilySeries']!),
+            child: HindiFamilySeries(hindiFamilySeries: hindiSeriesData['hindiFamilySeries']!),
           ),
           SliverToBoxAdapter(
-            child: HindiTalkShow(hindiTalkSeries: hindiSeriesData['hindiTalkSeries']!),
+            child: HindiTalkShow(hindiTalkShow: hindiSeriesData['hindiTalkSeries']!),
           ),
           SliverToBoxAdapter(
             child: HindiRealityShow(hindiRealityShow: hindiSeriesData['hindiRealitySeries']!),

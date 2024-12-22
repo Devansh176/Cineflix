@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 class HindiAnimationMovies extends StatefulWidget {
-  const HindiAnimationMovies({super.key, required this.hindiAnimationMovies});
-  final List hindiAnimationMovies;
+  const HindiAnimationMovies({super.key, required this.animationHindiMovies});
+  final List animationHindiMovies;
 
   @override
   State<HindiAnimationMovies> createState() => _HindiAnimationMoviesState();
@@ -13,142 +13,197 @@ class HindiAnimationMovies extends StatefulWidget {
 
 class _HindiAnimationMoviesState extends State<HindiAnimationMovies> {
   late Box animationBox;
-  List cachedAnimationMovies = [];
   bool isHiveInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    initializeHive();
-    print("Widget animationMovies: ${widget.hindiAnimationMovies.length}");
+    _initializeHiveOnce();
   }
 
-  Future<void> initializeHive() async {
-    try {
-      print("Opening Hive Box...");
-      animationBox = await Hive.openBox('AnimationMoviesBox');
-      print("Hive Box Opened Successfully");
-    } catch (e) {
-      print("Error initializing Hive : $e");
-    } finally {
-      if (mounted) {
+  Future<void> _initializeHiveOnce() async {
+    if (!isHiveInitialized) {
+      try {
+        if (Hive.isBoxOpen('AnimationMoviesBox')) {
+          animationBox = Hive.box('AnimationMoviesBox');
+        } else {
+          animationBox = await Hive.openBox('AnimationMoviesBox');
+        }
         setState(() {
           isHiveInitialized = true;
         });
-        loadMovies();
+      } catch (e) {
+        print("Error initializing Hive: $e");
       }
     }
   }
 
-  void loadMovies() {
-    final cachedData = animationBox.get('animationHindiMovies');
-    if (cachedData != null && cachedData.isNotEmpty) {
-      print("Cached data found in animation : ${cachedData.length}");
-      setState(() {
-        cachedAnimationMovies = List.from(cachedData);
-      });
-    } else {
-      print("No cached data found. Using passed animationMovies.");
-      setState(() {
-        cachedAnimationMovies = widget.hindiAnimationMovies;
-      });
-      animationBox.put('animationHindiMovies', widget.hindiAnimationMovies);
+  Future<List> loadMovies() async {
+    try {
+      if (!isHiveInitialized) {
+        await _initializeHiveOnce();
+      }
+
+      final cachedData = animationBox.get('animationHindiMovies');
+      final cachedTimestamp = animationBox.get('animationHindiMoviesTimestamp');
+
+      if (cachedData != null && cachedData.isNotEmpty && cachedTimestamp != null) {
+        final currentTime = DateTime.now();
+        final cacheTime = DateTime.parse(cachedTimestamp);
+        final difference = currentTime.difference(cacheTime).inDays;
+
+        if (difference <= 3) {
+          return List.from(cachedData);
+        }
+      }
+
+      await animationBox.put('animationHindiMovies', widget.animationHindiMovies);
+      await animationBox.put('animationHindiMoviesTimestamp', DateTime.now().toIso8601String());
+
+      return widget.animationHindiMovies;
+    } catch (e) {
+      return [];
     }
+  }
+
+  String getValidImageUrl(String? url) {
+    return (url != null && url.isNotEmpty)
+        ? 'https://image.tmdb.org/t/p/w500$url'
+        : 'https://via.placeholder.com/300';
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!isHiveInitialized) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-    print("Rendering movies: ${cachedAnimationMovies.length}");
-
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
     final height = screenSize.height;
     final fontSize = width * 0.05;
     final padding = width * 0.05;
 
-    String getValidImageUrl(String? url) {
-      return (url != null && url.isNotEmpty)
-          ? 'https://image.tmdb.org/t/p/w500$url'
-          : 'https://via.placeholder.com/300';
-    }
-
-    return Container(
-      padding: EdgeInsets.only(top: padding * 0.8, left: padding * 0.8,),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Animation Movies',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: fontSize * 1.22,
-              fontWeight: FontWeight.bold,
+    return FutureBuilder<List>(
+      future: loadMovies(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Failed to load movies. Please try again.',
+                  style: TextStyle(color: Colors.white),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {});
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
             ),
+          );
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text(
+              'No movies available.',
+              style: TextStyle(color: Colors.white),
+            ),
+          );
+        }
+
+        final movies = snapshot.data!;
+        return Container(
+          padding: EdgeInsets.only(
+            top: padding * 0.8,
+            left: padding * 0.8,
           ),
-          SizedBox(height: height * 0.02,),
-          SizedBox(
-            height: height * 0.36,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: cachedAnimationMovies.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Description(
-                          name: cachedAnimationMovies[index]['original_name'] ?? cachedAnimationMovies[index]['title'],
-                          bannerUrl: cachedAnimationMovies[index]['backdrop_path'] != null?'https://image.tmdb.org/t/p/w500'+cachedAnimationMovies[index]['backdrop_path'] : '',
-                          posterUrl: cachedAnimationMovies[index]['poster_path'] != null?'https://image.tmdb.org/t/p/w500'+cachedAnimationMovies[index]['poster_path'] : '',
-                          description: cachedAnimationMovies[index]['overview'] ?? 'No description available',
-                          vote: cachedAnimationMovies[index]['vote_average']?.toString() ?? 'N/A',
-                          launch_on: cachedAnimationMovies[index]['release_date'] ?? 'Unknown',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Animation Movies',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: fontSize * 1.22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: height * 0.02,
+              ),
+              SizedBox(
+                height: height * 0.39,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: movies.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Description(
+                              name: movies[index]['original_name'] ??
+                                  movies[index]['title'],
+                              bannerUrl: getValidImageUrl(
+                                  movies[index]['backdrop_path']),
+                              posterUrl: getValidImageUrl(
+                                  movies[index]['poster_path']),
+                              description: movies[index]['overview'] ??
+                                  'No description available',
+                              vote: movies[index]['vote_average']?.toString() ??
+                                  'N/A',
+                              launch_on:
+                              movies[index]['release_date'] ?? 'Unknown',
+                            ),
+                          ),
+                        );
+                      },
+                      child: SizedBox(
+                        width: width * 0.4,
+                        child: Column(
+                          children: [
+                            Container(
+                              height: height * 0.25,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: CachedNetworkImage(
+                                imageUrl: getValidImageUrl(
+                                    movies[index]['poster_path']),
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => const Center(
+                                    child: Text("")),
+                                errorWidget: (context, url, error) =>
+                                const Icon(Icons.error, color: Colors.grey),
+                              ),
+                            ),
+                            SizedBox(
+                              height: height * 0.025,
+                            ),
+                            Text(
+                              movies[index]['original_name'] ??
+                                  movies[index]['title'],
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: fontSize * 0.8,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
                       ),
                     );
                   },
-                  child: SizedBox(
-                    width: width * 0.4,
-                    child: Column(
-                      children: [
-                        Container(
-                          height: height * 0.25,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50,),
-                          ),
-                          child: CachedNetworkImage(
-                            imageUrl: getValidImageUrl(cachedAnimationMovies[index]['poster_path'],),
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                            errorWidget: (context, url, error) => Icon(Icons.error, color: Colors.grey),
-                          ),
-                        ),
-                        SizedBox(height: height * 0.025,),
-                        Text(
-                          cachedAnimationMovies[index]['original_name'] != null? cachedAnimationMovies[index]['original_name'] : cachedAnimationMovies[index]['title'],
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: fontSize * 0.8,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          )
-        ],
-      ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

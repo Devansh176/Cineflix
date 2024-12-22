@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:cineflix/provider/historyProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class Description extends StatefulWidget {
@@ -37,7 +39,42 @@ class _DescriptionState extends State<Description> {
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
   }
 
+  int? _randomAmount;
+
+  Future<void> _startPayment(String email, String contact) async {
+    _randomAmount = (Random().nextInt(21) + 10) * 10;
+
+    var options = {
+      'key': 'rzp_test_OWIoYondzA2igG',
+      'amount': _randomAmount! * 100,
+      'currency': 'INR',
+      'name': 'Cineflix',
+      'description': 'Movie Ticket Booking',
+      'prefill': {
+        'email': email,
+        'contact': contact,
+      },
+      'theme': {
+        'color': '#3399cc'
+      },
+      'external' : {
+        'wallets' : ['paytm']
+      },
+    };
+    _razorpay.open(options);
+  }
+
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final historyProvider = Provider.of<HistoryProvider>(context, listen: false);
+      historyProvider.addData(
+        title: widget.name,
+        cost: _randomAmount.toString(),
+        date: DateTime.now().toLocal().toString().split(' ')[0],
+        time: DateTime.now().toLocal().toString().split(' ')[1],
+        status: "Success",
+      );
+    });
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -56,6 +93,16 @@ class _DescriptionState extends State<Description> {
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      final historyProvider = Provider.of<HistoryProvider>(context, listen: false);
+      historyProvider.addData(
+        title: widget.name,
+        cost: _randomAmount.toString(),
+        date: DateTime.now().toLocal().toString().split(' ')[0],
+        time: DateTime.now().toLocal().toString().split(' ')[1],
+        status: "Failed",
+      );
+    });
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -71,31 +118,6 @@ class _DescriptionState extends State<Description> {
         ],
       ),
     );
-  }
-
-  Future<void> _startPayment(String email, String contact) async {
-    int randomAmount = (Random().nextInt(21) + 10) * 10;
-
-
-    var options = {
-      'key': 'rzp_test_OWIoYondzA2igG',
-      'amount': randomAmount * 100,
-      'currency': 'INR',
-      'name': 'Cineflix',
-      'description': 'Movie Ticket Booking',
-      'prefill': {
-        'email': email,
-        'contact': contact,
-      },
-      'theme': {
-        'color': '#3399cc'
-      },
-      'external' : {
-        'wallets' : ['paytm']
-      },
-    };
-
-    _razorpay.open(options);
   }
 
   void _scrollToBottom() {

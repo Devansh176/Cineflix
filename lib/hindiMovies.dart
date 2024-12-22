@@ -173,7 +173,7 @@ class _HindiMoviesState extends State<HindiMovies> {
 
       for (var category in categories.keys) {
         final cachedData = hindiMoviesBox.get(category);
-        if (cachedData != null) {
+        if (cachedData != null && cachedData.isNotEmpty) {
           hindiMoviesData[category] = cachedData;
         } else {
           final response = await categories[category]!();
@@ -195,49 +195,49 @@ class _HindiMoviesState extends State<HindiMovies> {
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: HindiUpcomingMovies(hindiUpcomingMovies: hindiMoviesData['upcomingHindiMovies']!),
+            child: HindiUpcomingMovies(upcomingHindiMovies: hindiMoviesData['upcomingHindiMovies']!),
           ),
           SliverToBoxAdapter(
-            child: HindiHorrorMovies(hindiHorrorMovies: hindiMoviesData['horrorHindiMovies']!),
+            child: HindiHorrorMovies(horrorHindiMovies: hindiMoviesData['horrorHindiMovies']!),
           ),
           SliverToBoxAdapter(
-            child: HindiThrillerMovies(hindiThrillerMovies: hindiMoviesData['thrillerHindiMovies']!),
+            child: HindiThrillerMovies(thrillerHindiMovies: hindiMoviesData['thrillerHindiMovies']!),
           ),
           SliverToBoxAdapter(
-            child: HindiAdventureMovies(hindiAdventureMovies: hindiMoviesData['adventureHindiMovies']!),
+            child: HindiAdventureMovies(adventureHindiMovies: hindiMoviesData['adventureHindiMovies']!),
           ),
           SliverToBoxAdapter(
-            child: HindiAnimationMovies(hindiAnimationMovies: hindiMoviesData['animationHindiMovies']!),
+            child: HindiAnimationMovies(animationHindiMovies: hindiMoviesData['animationHindiMovies']!),
           ),
           SliverToBoxAdapter(
-            child: HindiComedyMovies(hindiComedyMovies: hindiMoviesData['comedyHindiMovies']!),
+            child: HindiComedyMovies(comedyHindiMovies: hindiMoviesData['comedyHindiMovies']!),
           ),
           SliverToBoxAdapter(
-            child: HindiRomanceMovies(hindiRomanceMovies: hindiMoviesData['romanceHindiMovies']!),
+            child: HindiRomanceMovies(romanceHindiMovies: hindiMoviesData['romanceHindiMovies']!),
           ),
           SliverToBoxAdapter(
-            child: HindiScienceFictionMovies(hindiSciFiMovies: hindiMoviesData['sciFiHindiMovies']!),
+            child: HindiScienceFictionMovies(scienceFictionHindiMovies: hindiMoviesData['sciFiHindiMovies']!),
           ),
           SliverToBoxAdapter(
-            child: HindiDocumentaryMovies(hindiDocumentaryMovies: hindiMoviesData['documentaryHindiMovies']!),
+            child: HindiDocumentaryMovies(documentaryHindiMovies: hindiMoviesData['documentaryHindiMovies']!),
           ),
           SliverToBoxAdapter(
-            child: HindiHistoryMovies(hindiHistoryMovies: hindiMoviesData['historyHindiMovies']!),
+            child: HindiHistoryMovies(historyHindiMovies: hindiMoviesData['historyHindiMovies']!),
           ),
           SliverToBoxAdapter(
-            child: HindiWesternMovies(hindiWesternMovies: hindiMoviesData['westernHindiMovies']!),
+            child: HindiWesternMovies(westernHindiMovies: hindiMoviesData['westernHindiMovies']!),
           ),
           SliverToBoxAdapter(
-            child: HindiMysteryMovies(hindiMysteryMovies: hindiMoviesData['mysteryHindiMovies']!,),
+            child: HindiMysteryMovies(mysteryHindiMovies: hindiMoviesData['mysteryHindiMovies']!,),
           ),
           SliverToBoxAdapter(
-            child: HindiDramaMovies(hindiDramaMovies: hindiMoviesData['dramaHindiMovies']!,),
+            child: HindiDramaMovies(dramaHindiMovies: hindiMoviesData['dramaHindiMovies']!,),
           ),
           SliverToBoxAdapter(
-            child: HindiFamilyMovies(hindiFamilyMovies: hindiMoviesData['familyHindiMovies']!,),
+            child: HindiFamilyMovies(familyHindiMovies: hindiMoviesData['familyHindiMovies']!,),
           ),
           SliverToBoxAdapter(
-            child: HindiMusicFilms(hindiMusicFilms: hindiMoviesData['musicHindiFilms']!,),
+            child: HindiMusicFilms(musicHindiFilms: hindiMoviesData['musicHindiFilms']!,),
           ),
         ],
       ),
