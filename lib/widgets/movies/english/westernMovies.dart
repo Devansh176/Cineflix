@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cineflix/description.dart';
+import 'package:cineflix/provider/themeProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 
 class WesternMovies extends StatefulWidget {
   const WesternMovies({super.key, required this.westernMovies});
@@ -115,7 +118,9 @@ class _WesternMoviesState extends State<WesternMovies> {
         }
 
         final movies = snapshot.data!;
+        final themeProvider = Provider.of<ThemeProvider>(context);
         return Container(
+          color: themeProvider.getTheme() ? Colors.black : Colors.white,
           padding: EdgeInsets.only(
             top: padding * 0.8,
             left: padding * 0.8,
@@ -125,9 +130,9 @@ class _WesternMoviesState extends State<WesternMovies> {
             children: [
               Text(
                 'Western Movies',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: fontSize * 1.22,
+                style: GoogleFonts.afacad(
+                  color: themeProvider.getTheme() ? Colors.amber : Colors.yellow[800],
+                  fontSize: fontSize * 1.53,
                   fontWeight: FontWeight.bold,
                 ),
               ),

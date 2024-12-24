@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cineflix/description.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 
 class FamilyMovies extends StatefulWidget {
@@ -125,9 +126,9 @@ class _FamilyMoviesState extends State<FamilyMovies> {
             children: [
               Text(
                 'Family Movies',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: fontSize * 1.22,
+                style: GoogleFonts.afacad(
+                  color: Colors.amber,
+                  fontSize: fontSize * 1.53,
                   fontWeight: FontWeight.bold,
                 ),
               ),

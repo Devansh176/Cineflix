@@ -2,11 +2,11 @@ import 'package:cineflix/database/dbConnection.dart';
 import 'package:flutter/cupertino.dart';
 
 class HistoryProvider extends ChangeNotifier {
-  List<Map<String, dynamic>> _data = [];
+  final DBConnection dbConnection;
+  HistoryProvider({required this.dbConnection});
 
-  List<Map<String, dynamic>> getData(){
-    return [..._data];
-  }
+  List<Map<String, dynamic>> _data = [];
+  List<Map<String, dynamic>> getData() => _data;
 
   Future<void> fetchDataFromDb() async {
     final dbData = await DBConnection.getInstance.getAllTransactions();
@@ -31,6 +31,7 @@ class HistoryProvider extends ChangeNotifier {
     );
     if (success) {
       await fetchDataFromDb();
+      notifyListeners();
     }
   }
 
@@ -39,8 +40,15 @@ class HistoryProvider extends ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> deleteData(int id) async {
-    await DBConnection.getInstance.deleteTransaction(id);
-    await fetchDataFromDb();
+  Future<void> getInitialHistory() async {
+    _data = await dbConnection.getAllTransactions();
+    print("Fetched History : $_data");
+    notifyListeners();
   }
+
+  // Future<void> deleteData(int id) async {
+  //   await DBConnection.getInstance.deleteTransaction(id);
+  //   await fetchDataFromDb();
+  //   notifyListeners();
+  // }
 }

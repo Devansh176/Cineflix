@@ -1,4 +1,4 @@
-import 'package:cineflix/history.dart';
+import 'package:cineflix/database/dbConnection.dart';
 import 'package:cineflix/provider/historyProvider.dart';
 import 'package:cineflix/provider/themeProvider.dart';
 import 'package:cineflix/tabs.dart';
@@ -19,14 +19,16 @@ class MyApp extends StatelessWidget{
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeProvider(),),
-        ChangeNotifierProvider(create: (_) => HistoryProvider()..fetchDataFromDb(),),
+        ChangeNotifierProvider(create: (_) => HistoryProvider(dbConnection: DBConnection.getInstance),),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
           return MaterialApp(
             themeMode: themeProvider.getTheme() ? ThemeMode.dark : ThemeMode.light,
             darkTheme: ThemeData.dark(),
-            theme: ThemeData(brightness: Brightness.dark,),
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.red,),
+            ),
             debugShowCheckedModeBanner: false,
             home: Tabs(),
           );

@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:cineflix/history.dart';
 import 'package:cineflix/provider/historyProvider.dart';
+import 'package:cineflix/provider/themeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -43,7 +45,6 @@ class _DescriptionState extends State<Description> {
 
   Future<void> _startPayment(String email, String contact) async {
     _randomAmount = (Random().nextInt(21) + 10) * 10;
-
     var options = {
       'key': 'rzp_test_OWIoYondzA2igG',
       'amount': _randomAmount! * 100,
@@ -84,9 +85,14 @@ class _DescriptionState extends State<Description> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BookedHistory(),
+              ),
+            ),
             child: const Text("OK"),
-          )
+          ),
         ],
       ),
     );
@@ -112,9 +118,14 @@ class _DescriptionState extends State<Description> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BookedHistory(),
+              ),
+            ),
             child: const Text("OK"),
-          )
+          ),
         ],
       ),
     );
@@ -165,19 +176,22 @@ class _DescriptionState extends State<Description> {
     final fontSize = width * 0.05;
     final padding = width * 0.05;
 
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     String getValidImageUrl(String? url) {
       return (url != null && url.isNotEmpty)
           ? url
           : 'https://via.placeholder.com/300';
     }
-
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: themeProvider.getTheme()
+          ? Colors.black
+          : Colors.white,
       body: ListView(
         controller: _scrollController,
         children: <Widget>[
           SizedBox(
-            height: height * 0.3,
+            height: height * 0.35,
             child: Image.network(
               getValidImageUrl(
                   widget.bannerUrl.isNotEmpty ? widget.bannerUrl : widget
@@ -194,18 +208,19 @@ class _DescriptionState extends State<Description> {
               },
             ),
           ),
-          SizedBox(height: height * 0.005),
+          SizedBox(height: height * 0.005,),
           Center(
             child: Text(
               widget.name,
-              style: GoogleFonts.ibarraRealNova(
+              style: GoogleFonts.afacad(
                 fontSize: fontSize * 1.7,
                 fontWeight: FontWeight.w800,
+                color: themeProvider.getTheme() ? Colors.redAccent : Colors.red[900],
               ),
               textAlign: TextAlign.center,
             ),
           ),
-          SizedBox(height: height * 0.02),
+          SizedBox(height: height * 0.02,),
           Padding(
             padding: EdgeInsets.only(left: padding * 0.7),
             child: Column(
@@ -213,16 +228,18 @@ class _DescriptionState extends State<Description> {
               children: [
                 Text(
                   '⭐ Rating : ${widget.vote}',
-                  style: GoogleFonts.taiHeritagePro(
+                  style: GoogleFonts.openSans(
                     fontWeight: FontWeight.bold,
                     fontSize: fontSize * 0.9,
+                    color: themeProvider.getTheme() ? Colors.redAccent : Colors.red[900],
                   ),
                 ),
                 Text(
                   'Release date : ${widget.launch_on.isNotEmpty ? widget.launch_on : "First Air Date: N/A"}',
-                  style: GoogleFonts.taiHeritagePro(
+                  style: GoogleFonts.openSans(
                     fontWeight: FontWeight.bold,
                     fontSize: fontSize * 0.9,
+                    color: themeProvider.getTheme() ? Colors.redAccent : Colors.red[900],
                   ),
                 ),
                 SizedBox(height: height * 0.01),
@@ -247,8 +264,9 @@ class _DescriptionState extends State<Description> {
                   child: Text(
                     widget.description,
                     style: GoogleFonts.openSans(
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       fontSize: fontSize * 0.9,
+                      color: themeProvider.getTheme() ? Colors.redAccent : Colors.red[900],
                     ),
                     textAlign: TextAlign.justify,
                   ),
@@ -270,19 +288,19 @@ class _DescriptionState extends State<Description> {
                   });
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: themeProvider.getTheme() ? Colors.black : Colors.white,
                   textStyle: TextStyle(
                     fontSize: fontSize * 0.9,
                     fontWeight: FontWeight.bold,
                   ),
                   side: BorderSide(
-                    color: Colors.purple,
+                    color: themeProvider.getTheme() ? Colors.redAccent : (Colors.red[900] ?? Colors.red),
                   ),
                 ),
                 child: Text(
                   "Book Now",
                   style: TextStyle(
-                    color: Colors.purple,
+                    color: themeProvider.getTheme() ? Colors.redAccent : Colors.red[900],
                   ),
                 ),
               ),

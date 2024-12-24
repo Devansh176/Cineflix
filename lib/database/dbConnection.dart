@@ -29,6 +29,8 @@ class DBConnection {
     Directory appDir = await getApplicationDocumentsDirectory();
     String dbPath = join(appDir.path, "historyDb.db");
 
+    // await deleteDatabase(dbPath);
+
     return await openDatabase(
       dbPath,
       onCreate: (db, version) {
@@ -40,14 +42,29 @@ class DBConnection {
               "$COLUMN_HISTORY_COST INTEGER, "
               "$COLUMN_HISTORY_DATE TEXT,"
               "$COLUMN_HISTORY_TIME TEXT,"
-              "$COLUMN_HISTORY_STATUS TEXT,"
-          ")"
+              "$COLUMN_HISTORY_STATUS TEXT)"
         );
         print("Table $TABLE_HISTORY created successfully.");
       },
-      version: 10,
+      version: 6,
+        onUpgrade: (db, oldVersion, newVersion) async {
+          if (oldVersion < newVersion) {
+            print("Upgrading database from version $oldVersion to $newVersion");
+            // Handle specific schema updates here if required.
+          }
+        }
+
     );
   }
+
+  Future<void> verifyTable() async {
+    final db = await getDB();
+    final result = await db.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='$TABLE_HISTORY';"
+    );
+    print('Table existence check: $result');
+  }
+
 
   Future<bool> addTransaction({
     required String title,
@@ -61,7 +78,7 @@ class DBConnection {
       TABLE_HISTORY,
       {
         COLUMN_HISTORY_TITLE : title,
-        COLUMN_HISTORY_COST : cost,
+        COLUMN_HISTORY_COST : int.parse(cost),
         COLUMN_HISTORY_DATE : date,
         COLUMN_HISTORY_TIME : time,
         COLUMN_HISTORY_STATUS : status,
@@ -78,14 +95,14 @@ class DBConnection {
     return data;
   }
 
-  Future<void> deleteTransaction(int id) async {
-    final db = await getDB();
-    await db.delete(
-      TABLE_HISTORY,
-      where: '$COLUMN_HISTORY_ID = ?',
-      whereArgs: [id],
-    );
-  }
+  // Future<void> deleteTransaction(int id) async {
+  //   final db = await getDB();
+  //   await db.delete(
+  //     TABLE_HISTORY,
+  //     where: '$COLUMN_HISTORY_ID = ?',
+  //     whereArgs: [id],
+  //   );
+  // }
 }
 
 

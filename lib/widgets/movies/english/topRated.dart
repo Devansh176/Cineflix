@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cineflix/description.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 
 class TopRatedMovies extends StatefulWidget {
@@ -124,9 +125,9 @@ class _TopRatedMoviesState extends State<TopRatedMovies> {
             children: [
               Text(
                 'Top Rated Movies',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: fontSize * 1.22,
+                style: GoogleFonts.afacad(
+                  color: Colors.amber,
+                  fontSize: fontSize * 1.53,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -175,7 +176,7 @@ class _TopRatedMoviesState extends State<TopRatedMovies> {
                                     movies[index]['poster_path']),
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => const Center(
-                                    child: Text("")),
+                                    child: Text(""),),
                                 errorWidget: (context, url, error) =>
                                 const Icon(Icons.error, color: Colors.grey),
                               ),

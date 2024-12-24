@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cineflix/description.dart';
+import 'package:cineflix/provider/themeProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 
 class UpcomingMovies extends StatefulWidget {
   const UpcomingMovies({super.key, required this.upcomingMovies});
@@ -117,8 +120,10 @@ class _UpcomingMoviesState extends State<UpcomingMovies> {
           );
         }
 
+        final themeProvider = Provider.of<ThemeProvider>(context);
         final movies = snapshot.data!;
         return Container(
+          color: themeProvider.getTheme() ? Colors.black : Colors.white,
           padding: EdgeInsets.only(
             top: padding * 0.8,
             left: padding * 0.8,
@@ -128,9 +133,9 @@ class _UpcomingMoviesState extends State<UpcomingMovies> {
             children: [
               Text(
                 'Upcoming Movies',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: fontSize * 1.22,
+                style: GoogleFonts.afacad(
+                  color: themeProvider.getTheme() ? Colors.amber : Colors.yellow[800],
+                  fontSize: fontSize * 1.53,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -190,9 +195,9 @@ class _UpcomingMoviesState extends State<UpcomingMovies> {
                             Text(
                               movies[index]['original_name'] ??
                                   movies[index]['title'],
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: fontSize * 0.8,
+                              style: GoogleFonts.afacad(
+                                color: Colors.amberAccent,
+                                fontSize: fontSize * 0.95,
                               ),
                               textAlign: TextAlign.center,
                             ),
