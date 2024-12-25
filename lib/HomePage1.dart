@@ -26,7 +26,8 @@ class Homepage1 extends StatelessWidget {
               width: width * 0.53,
               color: themeProvider.getTheme()
                   ? Colors.black
-                  : Colors.white,              child: TabBar(
+                  : Colors.white,
+              child: TabBar(
               dividerColor: themeProvider.getTheme() ? Colors.red : Colors.red[900],
               labelColor: themeProvider.getTheme() ? Colors.redAccent : Colors.redAccent[700],
               indicatorColor: themeProvider.getTheme() ? Colors.redAccent : Colors.redAccent[700],

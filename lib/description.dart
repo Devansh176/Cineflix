@@ -354,7 +354,9 @@ class _DescriptionState extends State<Description> {
                           );
                         }
                       },
-                      child: Text("Proceed to Pay"),
+                      child: Text(
+                        "Proceed to Pay",
+                      ),
                     ),
                   ],
                 ),

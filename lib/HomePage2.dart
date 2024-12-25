@@ -29,7 +29,9 @@ class _Homepage2State extends State<Homepage2> {
             alignment: Alignment.centerRight,
             child: Container(
               width: width * 0.53,
-              color: Colors.black,
+              color: themeProvider.getTheme()
+                  ? Colors.black
+                  : Colors.white,
               child: TabBar(
                 dividerColor: themeProvider.getTheme() ? Colors.red : Colors.red[900],
                 labelColor: themeProvider.getTheme() ? Colors.redAccent : Colors.redAccent[700],

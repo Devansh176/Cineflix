@@ -87,9 +87,7 @@ class _AnimationMoviesState extends State<AnimationMovies> {
       future: loadMovies(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return Text("");
         } else if (snapshot.hasError) {
           return Center(
             child: Column(
@@ -120,6 +118,7 @@ class _AnimationMoviesState extends State<AnimationMovies> {
         final movies = snapshot.data!;
         final themeProvider = Provider.of<ThemeProvider>(context);
         return Container(
+          color: themeProvider.getTheme() ? Colors.black : Colors.white,
           padding: EdgeInsets.only(
             top: padding * 0.8,
             left: padding * 0.8,
@@ -130,7 +129,7 @@ class _AnimationMoviesState extends State<AnimationMovies> {
               Text(
                 'Animation Movies',
                 style: GoogleFonts.afacad(
-                  color: Colors.amber,
+                  color: themeProvider.getTheme() ? Colors.amber : Colors.yellow[800],
                   fontSize: fontSize * 1.53,
                   fontWeight: FontWeight.bold,
                 ),
@@ -191,9 +190,10 @@ class _AnimationMoviesState extends State<AnimationMovies> {
                             Text(
                               movies[index]['original_name'] ??
                                   movies[index]['title'],
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: fontSize * 0.8,
+                              style: GoogleFonts.afacad(
+                                color: Colors.red,
+                                fontSize: fontSize * 0.95,
+                                fontWeight: FontWeight.w700,
                               ),
                               textAlign: TextAlign.center,
                             ),

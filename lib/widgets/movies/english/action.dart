@@ -91,9 +91,7 @@ class _ActionMoviesState extends State<ActionMovies> {
       future: loadMovies(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return Text("");
         } else if (snapshot.hasError) {
           return Center(
             child: Column(
@@ -196,9 +194,10 @@ class _ActionMoviesState extends State<ActionMovies> {
                             Text(
                               movies[index]['original_name'] ??
                                   movies[index]['title'],
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: fontSize * 0.8,
+                              style: GoogleFonts.afacad(
+                                color: Colors.red,
+                                fontSize: fontSize * 0.95,
+                                fontWeight: FontWeight.w700,
                               ),
                               textAlign: TextAlign.center,
                             ),

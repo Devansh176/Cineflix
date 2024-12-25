@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cineflix/description.dart';
+import 'package:cineflix/provider/themeProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 
 class HindiHorrorMovies extends StatefulWidget {
   const HindiHorrorMovies({super.key, required this.horrorHindiMovies});
@@ -21,7 +24,6 @@ class _HindiHorrorMoviesState extends State<HindiHorrorMovies> {
     _initializeHiveOnce();
   }
 
-  /// Ensures Hive is initialized only once
   Future<void> _initializeHiveOnce() async {
     if (!isHiveInitialized) {
       try {
@@ -88,9 +90,7 @@ class _HindiHorrorMoviesState extends State<HindiHorrorMovies> {
       future: loadMovies(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return Text("");
         } else if (snapshot.hasError) {
           return Center(
             child: Column(
@@ -119,7 +119,9 @@ class _HindiHorrorMoviesState extends State<HindiHorrorMovies> {
         }
 
         final movies = snapshot.data!;
+        final themeProvider = Provider.of<ThemeProvider>(context);
         return Container(
+          color: themeProvider.getTheme() ? Colors.black : Colors.white,
           padding: EdgeInsets.only(
             top: padding * 0.8,
             left: padding * 0.8,
@@ -129,9 +131,9 @@ class _HindiHorrorMoviesState extends State<HindiHorrorMovies> {
             children: [
               Text(
                 'Horror Movies',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: fontSize * 1.22,
+                style: GoogleFonts.afacad(
+                  color: themeProvider.getTheme() ? Colors.amber : Colors.yellow[800],
+                  fontSize: fontSize * 1.53,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -191,9 +193,10 @@ class _HindiHorrorMoviesState extends State<HindiHorrorMovies> {
                             Text(
                               movies[index]['original_name'] ??
                                   movies[index]['title'],
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: fontSize * 0.8,
+                              style: GoogleFonts.afacad(
+                                color: Colors.red,
+                                fontSize: fontSize * 0.95,
+                                fontWeight: FontWeight.w700,
                               ),
                               textAlign: TextAlign.center,
                             ),

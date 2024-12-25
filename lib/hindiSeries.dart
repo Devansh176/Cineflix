@@ -7,8 +7,6 @@ import 'package:cineflix/widgets/series/hindi/hindiFamilySeries.dart';
 import 'package:cineflix/widgets/series/hindi/hindiMysterySeries.dart';
 import 'package:cineflix/widgets/series/hindi/hindiRealityShow.dart';
 import 'package:cineflix/widgets/series/hindi/hindiTalkShow.dart';
-import 'package:cineflix/widgets/series/hindi/hindiTopRatedSeries.dart';
-import 'package:cineflix/widgets/series/hindi/hindiTvShow.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -25,14 +23,10 @@ class _HindiSeriesState extends State<HindiSeries> {
   late Box hindiSeriesBox;
 
   Map<String, List> hindiSeriesData = {
-    'hindiTvShows': [],
-    'hindiTopRatedSeries': [],
     'hindiActionSeries': [],
     'hindiAnimationSeries': [],
     'hindiComedySeries': [],
-    'hindiRomanceSeries': [],
     'hindiDocumentarySeries': [],
-    'hindiWesternSeries': [],
     'hindiMysterySeries': [],
     'hindiDramaSeries': [],
     'hindiFamilySeries': [],
@@ -63,8 +57,6 @@ class _HindiSeriesState extends State<HindiSeries> {
   Future<void> loadSeries() async {
     try {
       final categories = {
-        'hindiTvShows': () => tmdbWithCustomLogs.v3.tv.getPopular(language: 'hi-IN'),
-        'hindiTopRatedSeries': () => tmdbWithCustomLogs.v3.tv.getTopRated(language: 'hi-IN'),
         'hindiActionSeries': () => tmdbWithCustomLogs.v3.discover.getTvShows(withGenres: '10759', withOrginalLanguage: 'hi', language: 'hi-IN'),
         'hindiAnimationSeries': () => tmdbWithCustomLogs.v3.discover.getTvShows(withGenres: '16', withOrginalLanguage: 'hi', language: 'hi-IN'),
         'hindiComedySeries': () => tmdbWithCustomLogs.v3.discover.getTvShows(withGenres: '35', withOrginalLanguage: 'hi', language: 'hi-IN'),
@@ -108,12 +100,6 @@ class _HindiSeriesState extends State<HindiSeries> {
       backgroundColor: Colors.black,
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: HindiTvShows(hindiTvShows: hindiSeriesData['hindiTvShows']!),
-          ),
-          SliverToBoxAdapter(
-            child: HindiTopRatedSeries(hindiTopRatedSeries: hindiSeriesData['hindiTopRatedSeries']!),
-          ),
           SliverToBoxAdapter(
             child: HindiActionSeries(hindiActionSeries: hindiSeriesData['hindiActionSeries']!),
           ),

@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cineflix/description.dart';
+import 'package:cineflix/provider/themeProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 
 class HindiScienceFictionMovies extends StatefulWidget {
   const HindiScienceFictionMovies({super.key, required this.scienceFictionHindiMovies});
@@ -84,9 +87,7 @@ class _HindiScienceFictionMoviesState extends State<HindiScienceFictionMovies> {
       future: loadMovies(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return Text("");
         } else if (snapshot.hasError) {
           return Center(
             child: Column(
@@ -115,7 +116,9 @@ class _HindiScienceFictionMoviesState extends State<HindiScienceFictionMovies> {
         }
 
         final movies = snapshot.data!;
+        final themeProvider = Provider.of<ThemeProvider>(context);
         return Container(
+          color: themeProvider.getTheme() ? Colors.black : Colors.white,
           padding: EdgeInsets.only(
             top: padding * 0.8,
             left: padding * 0.8,
@@ -125,9 +128,9 @@ class _HindiScienceFictionMoviesState extends State<HindiScienceFictionMovies> {
             children: [
               Text(
                 'Science Fiction Movies',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: fontSize * 1.22,
+                style: GoogleFonts.afacad(
+                  color: themeProvider.getTheme() ? Colors.amber : Colors.yellow[800],
+                  fontSize: fontSize * 1.53,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -187,9 +190,10 @@ class _HindiScienceFictionMoviesState extends State<HindiScienceFictionMovies> {
                             Text(
                               movies[index]['original_name'] ??
                                   movies[index]['title'],
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: fontSize * 0.8,
+                              style: GoogleFonts.afacad(
+                                color: Colors.red,
+                                fontSize: fontSize * 0.95,
+                                fontWeight: FontWeight.w700,
                               ),
                               textAlign: TextAlign.center,
                             ),
