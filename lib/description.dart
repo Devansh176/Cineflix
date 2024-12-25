@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:cineflix/history.dart';
@@ -7,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:http/http.dart' as http;
 
 class Description extends StatefulWidget {
   final String name, description, bannerUrl, posterUrl, vote, launch_on;
@@ -31,6 +34,8 @@ class _DescriptionState extends State<Description> {
   String customerContact = '';
   bool showFields = false;
   final _formKey = GlobalKey<FormState>();
+  late YoutubePlayerController _youtubePlayerController;
+  String? youtubeVideoKey;
 
   @override
   void initState() {
@@ -39,10 +44,35 @@ class _DescriptionState extends State<Description> {
     _scrollController = ScrollController();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    fetchTeaserVideo();
   }
 
-  int? _randomAmount;
+  final ytKey = "AIzaSyAiwCCHVjHQONJdV8nR1GX8huxcFdO0nfc";
 
+  Future<void> fetchTeaserVideo() async {
+    final url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&q=${widget.name} movie trailer&type=video&key=$ytKey';
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['items'].isNotEmpty) {
+          setState(() {
+            youtubeVideoKey = data['items'][0]['id']['videoId'];
+          });
+        } else {
+          throw Exception('No video found');
+        }
+      } else {
+        throw Exception('Failed to load YouTube video');
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to load video: $error')));
+    }
+  }
+
+
+
+  int? _randomAmount;
   Future<void> _startPayment(String email, String contact) async {
     _randomAmount = (Random().nextInt(21) + 10) * 10;
     var options = {
@@ -192,21 +222,31 @@ class _DescriptionState extends State<Description> {
         children: <Widget>[
           SizedBox(
             height: height * 0.35,
-            child: Image.network(
-              getValidImageUrl(
-                  widget.bannerUrl.isNotEmpty ? widget.bannerUrl : widget
-                      .posterUrl),
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Center(
-                  child: Icon(
-                    Icons.broken_image,
-                    color: Colors.grey,
-                    size: height * 0.15,
-                  ),
-                );
-              },
-            ),
+            child: youtubeVideoKey != null ?
+              YoutubePlayer(
+                controller: YoutubePlayerController(
+                  initialVideoId: youtubeVideoKey!,
+                  flags: YoutubePlayerFlags(
+                    autoPlay: true,
+                    mute: false,
+                    forceHD: true,
+                    loop: true,
+                  )
+                ),
+              ) : 
+              Image.network(
+                getValidImageUrl(widget.bannerUrl.isNotEmpty ? widget.bannerUrl : widget.posterUrl),
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      color: Colors.grey,
+                      size: height * 0.15,
+                    ),
+                  );
+                },
+              ),
           ),
           SizedBox(height: height * 0.005,),
           Center(
@@ -348,6 +388,10 @@ class _DescriptionState extends State<Description> {
                     SizedBox(height: height * 0.02),
 
                     TextFormField(
+                      style: GoogleFonts.afacad(
+                        color: themeProvider.getTheme() ? Colors.red : Colors.red[900],
+                        fontSize: fontSize,
+                      ),
                       cursorColor: Colors.red,
                       onChanged: (value) => customerContact = value,
                       validator: _validateContactNumber,
@@ -394,7 +438,7 @@ class _DescriptionState extends State<Description> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: themeProvider.getTheme() ? Colors.redAccent[700] : Colors.red[900],
+                        backgroundColor: themeProvider.getTheme() ? Colors.red[700] : Colors.red[900],
                         textStyle: TextStyle(
                           fontSize: fontSize * 0.85,
                           fontWeight: FontWeight.bold,
