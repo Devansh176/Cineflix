@@ -275,37 +275,38 @@ class _DescriptionState extends State<Description> {
             ),
           ),
           SizedBox(height: height * 0.03),
-          Center(
-            child: SizedBox(
-              width: width * 0.5,
-              child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    showFields = true;
-                  });
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _scrollToBottom();
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: themeProvider.getTheme() ? Colors.black : Colors.white,
-                  textStyle: TextStyle(
-                    fontSize: fontSize * 0.9,
-                    fontWeight: FontWeight.bold,
+          if(!showFields)
+            Center(
+              child: SizedBox(
+                width: width * 0.4,
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      showFields = true;
+                    });
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _scrollToBottom();
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: themeProvider.getTheme() ? Colors.black : Colors.white,
+                    textStyle: TextStyle(
+                      fontSize: fontSize * 0.9,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    side: BorderSide(
+                      color: themeProvider.getTheme() ? Colors.redAccent : (Colors.red[900] ?? Colors.red),
+                    ),
                   ),
-                  side: BorderSide(
-                    color: themeProvider.getTheme() ? Colors.redAccent : (Colors.red[900] ?? Colors.red),
-                  ),
-                ),
-                child: Text(
-                  "Book Now",
-                  style: TextStyle(
-                    color: themeProvider.getTheme() ? Colors.redAccent : Colors.red[900],
+                  child: Text(
+                    "Book Now",
+                    style: GoogleFonts.afacad(
+                      color: themeProvider.getTheme() ? Colors.redAccent : Colors.red[900],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
           if(showFields)
             Padding(
               padding: EdgeInsets.all(width * 0.05,),
@@ -314,29 +315,67 @@ class _DescriptionState extends State<Description> {
                 child: Column(
                   children: [
                     TextFormField(
+                      style: GoogleFonts.afacad(
+                        color: themeProvider.getTheme() ? Colors.red : Colors.red[900],
+                        fontSize: fontSize,
+                      ),
+                      cursorColor: Colors.red,
                       onChanged: (value) => customerEmail = value,
                       validator: _validateEmail,
                       decoration: InputDecoration(
                         labelText: "Email",
+                        labelStyle: GoogleFonts.afacad(
+                          color: Colors.red[900],
+                        ),
                         hintText: "Enter your email",
-                        border: OutlineInputBorder(),
-                        fillColor: Colors.black,
+                        hintStyle: GoogleFonts.afacad(
+                          color: Colors.red[900],
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                          ),
+                        ),
+                        fillColor: themeProvider.getTheme() ? Colors.black : Colors.white,
                         filled: true,
                       ),
                     ),
                     SizedBox(height: height * 0.02),
+
                     TextFormField(
+                      cursorColor: Colors.red,
                       onChanged: (value) => customerContact = value,
                       validator: _validateContactNumber,
                       decoration: InputDecoration(
                         labelText: "Contact Number",
+                        labelStyle: GoogleFonts.afacad(
+                          color: Colors.red[900],
+                        ),
                         hintText: "Enter your contact number",
-                        border: OutlineInputBorder(),
-                        fillColor: Colors.black,
+                        hintStyle: GoogleFonts.afacad(
+                          color: Colors.red[900],
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                          ),
+                        ),
+                        fillColor: themeProvider.getTheme() ? Colors.black : Colors.white,
                         filled: true,
                       ),
                       keyboardType: TextInputType.phone,
                     ),
+
                     SizedBox(height: height * 0.02),
                     ElevatedButton(
                       onPressed: () {
@@ -354,8 +393,18 @@ class _DescriptionState extends State<Description> {
                           );
                         }
                       },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: themeProvider.getTheme() ? Colors.redAccent[700] : Colors.red[900],
+                        textStyle: TextStyle(
+                          fontSize: fontSize * 0.85,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       child: Text(
                         "Proceed to Pay",
+                        style: GoogleFonts.afacad(
+                          color: themeProvider.getTheme() ? Colors.black : Colors.white,
+                        ),
                       ),
                     ),
                   ],
