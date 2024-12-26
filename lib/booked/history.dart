@@ -1,3 +1,4 @@
+import 'package:cineflix/booked/receipt.dart';
 import 'package:cineflix/provider/historyProvider.dart';
 import 'package:cineflix/provider/themeProvider.dart';
 import 'package:cineflix/tabs.dart';
@@ -46,9 +47,7 @@ class _BookedHistoryState extends State<BookedHistory> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery
-        .of(context)
-        .size;
+    final screenSize = MediaQuery.of(context).size;
     final double width = screenSize.width;
     final padding = width * 0.05;
     final fontSize = width * 0.05;
@@ -99,7 +98,7 @@ class _BookedHistoryState extends State<BookedHistory> {
           };
 
           for (var item in allData) {
-            DateTime itemDate = DateFormat('yyyy-MM-dd').parse(item['date']);
+            DateTime itemDate = DateFormat('dd-MM-yyyy').parse(item['date']);
             if (itemDate.isAtSameMomentAs(
                 DateTime(now.year, now.month, now.day))) {
               groupedData["Today"]!.add(item);
@@ -180,6 +179,16 @@ class _BookedHistoryState extends State<BookedHistory> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReceiptPage(
+                            bookingDetails: item,
+                          ),
+                        ),
+                      );
+                    },
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: padding * 0.5,
                       vertical: padding * 0.3,

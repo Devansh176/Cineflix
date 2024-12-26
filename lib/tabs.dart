@@ -1,6 +1,6 @@
 import 'package:cineflix/HomePage1.dart';
 import 'package:cineflix/HomePage2.dart';
-import 'package:cineflix/history.dart';
+import 'package:cineflix/booked/history.dart';
 import 'package:cineflix/provider/themeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

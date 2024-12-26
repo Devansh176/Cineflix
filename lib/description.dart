@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:cineflix/history.dart';
+import 'package:cineflix/booked/history.dart';
 import 'package:cineflix/provider/historyProvider.dart';
 import 'package:cineflix/provider/themeProvider.dart';
 import 'package:flutter/material.dart';
@@ -27,15 +27,15 @@ class Description extends StatefulWidget {
   State<Description> createState() => _DescriptionState();
 }
 
-class _DescriptionState extends State<Description> {
+class _DescriptionState extends State<Description> with WidgetsBindingObserver{
   late Razorpay _razorpay;
   late ScrollController _scrollController;
   String customerEmail = '';
   String customerContact = '';
   bool showFields = false;
   final _formKey = GlobalKey<FormState>();
-  late YoutubePlayerController _youtubePlayerController;
   String? youtubeVideoKey;
+  YoutubePlayerController? _youtubePlayerController;
 
   @override
   void initState() {
@@ -44,13 +44,28 @@ class _DescriptionState extends State<Description> {
     _scrollController = ScrollController();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    WidgetsBinding.instance.addObserver(this);
     fetchTeaserVideo();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      _youtubePlayerController?.pause();
+    }
+  }
+
+  @override
+  void deactivate() {
+    _youtubePlayerController?.pause();
+    super.deactivate();
   }
 
   final ytKey = "AIzaSyAiwCCHVjHQONJdV8nR1GX8huxcFdO0nfc";
 
   Future<void> fetchTeaserVideo() async {
-    final url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&q=${widget.name} movie trailer&type=video&key=$ytKey';
+    final url =
+        'https://www.googleapis.com/youtube/v3/search?part=snippet&q=${widget.name} movie trailer&type=video&key=$ytKey';
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -58,6 +73,15 @@ class _DescriptionState extends State<Description> {
         if (data['items'].isNotEmpty) {
           setState(() {
             youtubeVideoKey = data['items'][0]['id']['videoId'];
+            _youtubePlayerController = YoutubePlayerController(
+              initialVideoId: youtubeVideoKey!,
+              flags: const YoutubePlayerFlags(
+                autoPlay: true,
+                mute: false,
+                forceHD: true,
+                loop: true,
+              ),
+            );
           });
         } else {
           throw Exception('No video found');
@@ -66,7 +90,9 @@ class _DescriptionState extends State<Description> {
         throw Exception('Failed to load YouTube video');
       }
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to load video: $error')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load video: $error')),
+      );
     }
   }
 
@@ -74,10 +100,12 @@ class _DescriptionState extends State<Description> {
 
   int? _randomAmount;
   Future<void> _startPayment(String email, String contact) async {
+    _youtubePlayerController?.pause();
+
     _randomAmount = (Random().nextInt(21) + 10) * 10;
     var options = {
       'key': 'rzp_test_OWIoYondzA2igG',
-      'amount': _randomAmount! * 100,
+      'amount': _randomAmount! * 97,
       'currency': 'INR',
       'name': 'Cineflix',
       'description': 'Movie Ticket Booking',
@@ -171,9 +199,12 @@ class _DescriptionState extends State<Description> {
 
   @override
   void dispose() {
-    super.dispose();
+    _youtubePlayerController?.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     _razorpay.clear();
     _scrollController.dispose();
+    _youtubePlayerController?.dispose();
+    super.dispose();
   }
 
   final String? Function(String?) _validateContactNumber = (String? value) {
@@ -222,18 +253,10 @@ class _DescriptionState extends State<Description> {
         children: <Widget>[
           SizedBox(
             height: height * 0.35,
-            child: youtubeVideoKey != null ?
+            child: youtubeVideoKey != null && _youtubePlayerController != null ?
               YoutubePlayer(
-                controller: YoutubePlayerController(
-                  initialVideoId: youtubeVideoKey!,
-                  flags: YoutubePlayerFlags(
-                    autoPlay: true,
-                    mute: false,
-                    forceHD: true,
-                    loop: true,
-                  )
-                ),
-              ) : 
+                controller: _youtubePlayerController!,
+              ) :
               Image.network(
                 getValidImageUrl(widget.bannerUrl.isNotEmpty ? widget.bannerUrl : widget.posterUrl),
                 fit: BoxFit.cover,
@@ -425,6 +448,7 @@ class _DescriptionState extends State<Description> {
                       onPressed: () {
                         if (_formKey.currentState?.validate() ?? false) {
                           if (customerEmail.isNotEmpty && customerContact.isNotEmpty) {
+                            _youtubePlayerController!.pause();
                             _startPayment(customerEmail, customerContact);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
