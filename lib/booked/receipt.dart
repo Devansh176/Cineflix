@@ -171,6 +171,13 @@ class _ReceiptPageState extends State<ReceiptPage> {
         text: 'Here is your movie ticket!',
       );
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Receipt ${_shouldPrint ? "printed" : "shared"} successfully!'),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   @override

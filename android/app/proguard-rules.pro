@@ -51,5 +51,8 @@
     public static int e(...);
 }
 
+-keep class com.google.android.play.core.** { *; }
+-dontwarn com.google.android.play.core.**
+
 # Optimize the rules for better performance
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
