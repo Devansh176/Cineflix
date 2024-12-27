@@ -1,20 +1,55 @@
-# Please add these rules to your existing keep rules in order to suppress warnings.
-# This is generated automatically by the Android Gradle plugin.
--dontwarn proguard.annotation.Keep
--dontwarn proguard.annotation.KeepClassMembers
-
-## Keep Razorpay classes and member
--keep class com.razorpay.** { *; }
--keep class com.razorpay.Razorpay** { *; }
--keep class com.razorpay.**$* { *; }
-
-## Keep other necessary classes
--dontwarn com.razorpay.**
-
--keepattributes *Annotation*
--dontwarn com.razorpay.**
--keep class com.razorpay.** {*;}
--optimizations !method/inlining/
--keepclasseswithmembers class * {
-  public void onPayment*(...);
+# Flutter-specific rules
+-keepclassmembers class * {
+    @androidx.annotation.Keep *;
 }
+
+# Do not obfuscate any Retrofit or TMDB API-related classes
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes Annotation
+
+# Retain data classes and keep Gson serialization/deserialization working
+-keep class com.google.gson.** { *; }
+-keep class com.google.gson.annotations.** { *; }
+
+# OkHttp rules to prevent obfuscation
+-dontwarn okhttp3.**
+-keep class okhttp3.** { *; }
+-keepclassmembers class okhttp3.** { *; }
+
+# Prevent obfuscation of network-related code
+-keep class org.apache.http.** { *; }
+-keep class javax.net.ssl.** { *; }
+
+# Prevent obfuscation of Flutter classes
+-keep class io.flutter.** { *; }
+-keepclassmembers class io.flutter.** { *; }
+
+# Do not remove or rename methods/classes used by reflection
+-keepattributes InnerClasses,EnclosingMethod
+-keepclassmembers class ** {
+    *;
+}
+-keepnames class * {
+    *;
+}
+
+# Retain Firebase-related classes
+-keep class com.google.firebase.** { *; }
+-keep class com.google.android.gms.** { *; }
+
+# Razorpay-specific rules
+-keep class com.razorpay.** { *; }
+-dontwarn com.razorpay.**
+
+# Do not strip out logging
+-assumenosideeffects class android.util.Log {
+    public static int v(...);
+    public static int d(...);
+    public static int i(...);
+    public static int w(...);
+    public static int e(...);
+}
+
+# Optimize the rules for better performance
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*

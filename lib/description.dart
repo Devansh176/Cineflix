@@ -57,7 +57,10 @@ class _DescriptionState extends State<Description> with WidgetsBindingObserver{
 
   @override
   void deactivate() {
-    _youtubePlayerController?.pause();
+    if (_youtubePlayerController != null) {
+      print('Forcing video to pause');
+      _youtubePlayerController?.pause();
+    }
     super.deactivate();
   }
 
@@ -76,7 +79,7 @@ class _DescriptionState extends State<Description> with WidgetsBindingObserver{
             _youtubePlayerController = YoutubePlayerController(
               initialVideoId: youtubeVideoKey!,
               flags: const YoutubePlayerFlags(
-                autoPlay: true,
+                autoPlay: false,
                 mute: false,
                 forceHD: true,
                 loop: true,
@@ -448,7 +451,9 @@ class _DescriptionState extends State<Description> with WidgetsBindingObserver{
                       onPressed: () {
                         if (_formKey.currentState?.validate() ?? false) {
                           if (customerEmail.isNotEmpty && customerContact.isNotEmpty) {
-                            _youtubePlayerController!.pause();
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              _youtubePlayerController?.pause();
+                            });
                             _startPayment(customerEmail, customerContact);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(

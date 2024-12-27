@@ -8,7 +8,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
 
-
 class BookedHistory extends StatefulWidget {
   const BookedHistory({super.key});
 
@@ -17,7 +16,6 @@ class BookedHistory extends StatefulWidget {
 }
 
 class _BookedHistoryState extends State<BookedHistory> {
-
   Color getRandomBrightColor() {
     math.Random random = math.Random();
     return Color.fromARGB(
@@ -37,7 +35,6 @@ class _BookedHistoryState extends State<BookedHistory> {
       random.nextInt(100),
     );
   }
-
 
   @override
   void initState() {
@@ -60,14 +57,14 @@ class _BookedHistoryState extends State<BookedHistory> {
         title: Text(
           "Booking History",
           style: GoogleFonts.afacad(
-            color: Colors.red[700],
+            color: themeProvider.getTheme() ? Colors.amber : Colors.red[700],
             fontSize: fontSize * 1.5,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
         actions: [
           IconButton(
-            color: Colors.red[700],
+            color: themeProvider.getTheme() ? Colors.amber : Colors.red[700],
             onPressed: () {
               Navigator.push(
                 context,
@@ -76,21 +73,14 @@ class _BookedHistoryState extends State<BookedHistory> {
                 ),
               );
             },
-            icon: Icon(
-              Icons.home,
-            ),
+            icon: Icon(Icons.home),
           ),
         ],
       ),
       backgroundColor: themeProvider.getTheme() ? Colors.black : Colors.white,
       body: Consumer<HistoryProvider>(
         builder: (ctx, historyProvider, __) {
-          var allData = historyProvider
-              .getData()
-              .reversed
-              .toList();
-          print("Booking history: $allData");
-
+          var allData = historyProvider.getData().reversed.toList();
           final now = DateTime.now();
           Map<String, List<Map<String, dynamic>>> groupedData = {
             "Today": [],
@@ -98,7 +88,7 @@ class _BookedHistoryState extends State<BookedHistory> {
           };
 
           for (var item in allData) {
-            DateTime itemDate = DateFormat('dd-MM-yyyy').parse(item['date']);
+            DateTime itemDate = DateFormat('yyyy-MM-dd').parse(item['date']);
             if (itemDate.isAtSameMomentAs(
                 DateTime(now.year, now.month, now.day))) {
               groupedData["Today"]!.add(item);
@@ -148,13 +138,14 @@ class _BookedHistoryState extends State<BookedHistory> {
   }
 
   Widget _buildDateGroup(String title, List<Map<String, dynamic>> items,
-      double padding, double fontSize, ThemeProvider themeProvider) {
+      double padding,double fontSize, ThemeProvider themeProvider) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: EdgeInsets.all(padding),
-          child: Text("* $title *",
+          child: Text(
+            "* $title *",
             style: GoogleFonts.afacad(
               fontSize: fontSize * 1.6,
               fontWeight: FontWeight.bold,
@@ -164,94 +155,91 @@ class _BookedHistoryState extends State<BookedHistory> {
         ),
         ListView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: items.length,
           itemBuilder: (context, index) {
             var item = items[index];
             return Padding(
               padding: EdgeInsets.only(bottom: padding * 0.1),
-              child: GestureDetector(
-                onTap: () {},
-                child: Card(
-                  elevation: 5,
-                  color: Colors.white10,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ReceiptPage(
-                            bookingDetails: item,
-                          ),
+              child: Card(
+                elevation: 5,
+                color: Colors.white10,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: ListTile(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ReceiptPage(
+                          bookingDetails: item,
                         ),
-                      );
-                    },
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: padding * 0.5,
-                      vertical: padding * 0.3,
-                    ),
-                    title: Text(
-                      item['title'] ?? 'Unknown',
-                      style: GoogleFonts.afacad(
-                        fontSize: fontSize * 1.3,
-                        color: themeProvider.getTheme()
-                            ? getRandomBrightColor()
-                            : getRandomDarkColor(),
-                        fontWeight: FontWeight.bold,
                       ),
+                    );
+                  },
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: padding * 0.5,
+                    vertical: padding * 0.3,
+                  ),
+                  title: Text(
+                    item['title'] ?? 'Unknown',
+                    style: GoogleFonts.afacad(
+                      fontSize: fontSize * 1.3,
+                      color: themeProvider.getTheme()
+                          ? getRandomBrightColor()
+                          : getRandomDarkColor(),
+                      fontWeight: FontWeight.bold,
                     ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Date: ${item['date'] ?? 'N/A'}",
-                          style: TextStyle(
-                            color: themeProvider.getTheme()
-                                ? Colors.white
-                                : Colors.black,
-                          ),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Date: ${item['date'] ?? 'N/A'}",
+                        style: TextStyle(
+                          color: themeProvider.getTheme()
+                              ? Colors.white
+                              : Colors.black,
                         ),
-                        Text(
-                          "Time: ${item['time'] ?? 'N/A'}",
-                          style: TextStyle(
-                            color: themeProvider.getTheme()
-                                ? Colors.white
-                                : Colors.black,
-                          ),
+                      ),
+                      Text(
+                        "Time: ${item['time'] ?? 'N/A'}",
+                        style: TextStyle(
+                          color: themeProvider.getTheme()
+                              ? Colors.white
+                              : Colors.black,
                         ),
-                      ],
-                    ),
-                    trailing: Column(
-                      children: [
-                        Text(
-                          "₹${item['cost'] ?? '0'}",
-                          style: TextStyle(
-                            fontSize: fontSize * 0.9,
-                            color: item['status'] == 'Success'
-                                ? (themeProvider.getTheme()
-                                ? Colors.green
-                                : Colors.green[800])
-                                : Colors.red[700],
-                            fontWeight: FontWeight.w600,
-                          ),
+                      ),
+                    ],
+                  ),
+                  trailing: Column(
+                    children: [
+                      Text(
+                        "₹${item['cost'] ?? '0'}",
+                        style: TextStyle(
+                          fontSize: fontSize * 0.9,
+                          color: item['status'] == 'Success'
+                              ? (themeProvider.getTheme()
+                              ? Colors.green
+                              : Colors.green[800])
+                              : Colors.red[700],
+                          fontWeight: FontWeight.w600,
                         ),
-                        Text(
-                          "${item['status'] ?? 'N/A'}",
-                          style: TextStyle(
-                            fontSize: fontSize * 0.9,
-                            color: item['status'] == 'Success'
-                                ? (themeProvider.getTheme()
-                                ? Colors.green
-                                : Colors.green[800])
-                                : Colors.red[700],
-                            fontWeight: FontWeight.w600,
-                          ),
+                      ),
+                      Text(
+                        "${item['status'] ?? 'N/A'}",
+                        style: TextStyle(
+                          fontSize: fontSize * 0.9,
+                          color: item['status'] == 'Success'
+                              ? (themeProvider.getTheme()
+                              ? Colors.green
+                              : Colors.green[800])
+                              : Colors.red[700],
+                          fontWeight: FontWeight.w600,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
